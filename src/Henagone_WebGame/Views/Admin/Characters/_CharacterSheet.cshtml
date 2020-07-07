@@ -1,0 +1,68 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@model string
+@{
+    Characters characterModel;
+    int gold = 0, artifact = 0;
+    using (var context = new SiteDbContext())
+    {
+        characterModel = context.Characters
+            .Where(r => r.UserId == Model)
+            .Select(r => r).FirstOrDefault();
+
+        gold = context.Gold
+            .Where(r => r.UserId == Model)
+            .Select(r => r.Number).FirstOrDefault();
+
+        artifact = context.Artifacts
+            .Where(r => r.UserId == Model)
+            .Select(r => r.Number).FirstOrDefault();
+    }
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">@UserManager.FindByIdAsync(Model).Result.UserName - @Localizer["Level"] <span class="JsLevel">@characterModel.Level</span></div>
+    <div id="playerDiv" class="panel-body">
+        <div class="table-responsive">
+            <table class="table">
+                <tbody>
+                    <tr id="goldandartifacts">
+                        <td class="user-avatar"><img alt="Gold" src="~/images/Game/gold.svg"><span id="JsGold">@gold</span> @Localizer["Gold"]</td>
+                        <td class="user-avatar"><img alt="Artifact" src="~/images/Game/artifact.svg" style="transform: scale(1.5);"><span id="JsArtifacts">@artifact</span> @Localizer["Artifacts"]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="playerDivLeft">
+            <div style="text-align: center;">
+                <img alt="Avatar" src="@("/images/avatars/" + characterModel.AvatarId + ".svg")" style="width: 45%;">
+            </div>
+            <div style="margin: auto; width: 80%; margin-top: 13px;">
+                <div class="progress">
+                    <div id="JsLife" class="progress-bar progress-bar-danger" style="width: 100%">@Localizer["Life"] <span id="JsLifeText">@(100 + characterModel.VitalityAdd) PV</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="playerDivRight">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <td>@Localizer["Strength"]</td>
+                            <td class="number"><a id="JsStrength" class="icon" href="#">@characterModel.Strength</a> <span id="JsStrengthAdd">(+@characterModel.StrengthAdd)</span></td>
+                        </tr>
+                        <tr>
+                            <td>@Localizer["Defense"]</td>
+                            <td class="number"><a id="JsDefense" class="icon" href="#">@characterModel.Defense</a> <span id="JsDefenseAdd">(+@characterModel.DefenseAdd)</span></td>
+                        </tr>
+                        <tr>
+                            <td>@Localizer["Energy"]</td>
+                            <td class="number"><a id="JsEnergy" class="icon" href="#">@characterModel.Energy</a> <span id="JsEnergyAdd">(+@characterModel.EnergyAdd)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div style="clear: both;"></div>
+    </div>
+</div>

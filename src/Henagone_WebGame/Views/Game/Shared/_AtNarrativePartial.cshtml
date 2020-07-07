@@ -1,0 +1,102 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    bool fatalError = false;
+    NarrativeQuestStep stepData = null;
+    using (var context = new SiteDbContext())
+    {
+        var currentQuest = context.AtNarrativeQuest
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).FirstOrDefault();
+
+        if (currentQuest != null)
+        {
+            stepData = context.NarrativeQuestStep
+                .Where(r => r.Id == currentQuest.Step)
+                .Select(r => r).FirstOrDefault();
+        }
+        else { fatalError = true; }
+    }
+}
+
+@if(fatalError || stepData == null) {
+    <p>Fatal system error</p>
+}
+else {
+    <div id="narrativeDiv" style="width: 600px;" class="panel panel-default panel-border-color panel-border-color-primary">
+        <div class="panel-body">
+            <p>@Util.LanguageSelection(stepData.DescriptionEn, stepData.DescriptionFr)</p>
+            @if (stepData.ChoiceOneEn != null)
+            {
+                <button id="AtNarrativeChoiceOne" class="btn btn-space btn-primary">@Util.LanguageSelection(stepData.ChoiceOneEn, stepData.ChoiceOneFr)</button>
+            }
+
+            @if (stepData.ChoiceTwoEn != null)
+            {
+                <button id="AtNarrativeChoiceTwo" class="btn btn-space btn-primary">@Util.LanguageSelection(stepData.ChoiceTwoEn, stepData.ChoiceTwoFr)</button>
+            }
+
+            @if (stepData.ChoiceThreeEn != null)
+            {
+                <button id="AtNarrativeChoiceThree" class="btn btn-space btn-primary">@Util.LanguageSelection(stepData.ChoiceThreeEn, stepData.ChoiceThreeFr)</button>
+            }
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            $("#questImgBackground").attr("src", "/uploads/game/quests/landscape/@(stepData.Id + ".svg")");
+
+            UICenterDiv('#narrativeDiv');
+            window.onresize = function (event) {
+                UICenterDiv('#narrativeDiv');
+            }
+
+            $("#heroQuestDivCenter").find('img').each(function () {
+                var fakeSrc = $(this).attr('src');
+                $("<img/>").attr("src", fakeSrc).css('display', 'none').load(function () {
+                    images_loaded++;
+                    if (images_loaded >= total_images) {
+                        UICenterDiv('#narrativeDiv');
+                    }
+                });
+            });
+
+            $('#AtNarrativeChoiceOne').on('click', AtNarrativeChoiceOne);
+            $('#AtNarrativeChoiceTwo').on('click', AtNarrativeChoiceTwo);
+            $('#AtNarrativeChoiceThree').on('click', AtNarrativeChoiceThree);
+
+            function AtNarrativeChoiceOne() {
+                @if (stepData.ChoiceOneEn != null && stepData.TextOneEn != null) {
+                   <text>   
+                    $('#narrativeDiv').empty();
+                    $('#narrativeDiv').html('<p> @Util.LanguageSelection(stepData.TextOneEn, stepData.TextOneFr) </p><a onclick="NarrativeQuestNextStep(1)" class="btn btn-space btn-primary"> @Localizer["Next Step"] </a>');
+                    CenterDiv();
+                   </text>
+                } else { <text>NarrativeQuestNextStep();</text> }
+            }
+
+            function AtNarrativeChoiceTwo() {
+                @if (stepData.ChoiceTwoEn != null && stepData.TextTwoEn != null) {
+                    <text>   
+                     $('#narrativeDiv').empty();
+                     $('#narrativeDiv').html('<p> @Util.LanguageSelection(stepData.TextTwoEn, stepData.TextTwoFr) </p><a onclick="NarrativeQuestNextStep(2)" class="btn btn-space btn-primary"> @Localizer["Next Step"] </a>');
+                     CenterDiv();
+                    </text>
+                } else { <text>NarrativeQuestNextStep();</text> }
+            }
+
+            function AtNarrativeChoiceThree() {
+                @if (stepData.ChoiceThreeEn != null && stepData.TextThreeEn != null) {
+                    <text>   
+                     $('#narrativeDiv').empty();
+                     $('#narrativeDiv').html('<p> @Util.LanguageSelection(stepData.TextThreeEn, stepData.TextThreeFr) </p><a onclick="NarrativeQuestNextStep(3)" class="btn btn-space btn-primary"> @Localizer["Next Step"] </a>');
+                     CenterDiv();
+                    </text>
+                } else { <text>NarrativeQuestNextStep();</text> }
+            }
+        });
+    </script>
+}

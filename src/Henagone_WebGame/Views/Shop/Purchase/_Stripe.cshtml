@@ -1,0 +1,53 @@
+﻿@using Henagone_WebGame.Models.ShopViewModels
+@model Henagone_WebGame.Models.ShopViewModels.StripeChargeForm
+@{
+    List<ArtifactsPrices> ArtifactList;
+    using (var context = new SiteDbContext())
+    {
+        ArtifactList = context.ArtifactsPrices
+            .OrderBy(r => r.Price)
+            .Select(r => r).ToList();
+    }
+}
+
+<form id="StripeForm" asp-controller="Shop" asp-action="PaidWithCard">
+    <div id="stripeDivResult"></div>
+    <div class="card-wrapper"></div>
+    <div class="splash-container">
+    <input type="hidden" asp-for="Token"  />
+
+        <div class="form-group row">
+            <div class="col-xs-6">
+                <input name="number" id="number" class="form-control" required type="text" placeholder="@Localizer["Card number"]">
+            </div>
+            <div class="col-xs-6">
+                <input asp-for="Name" name="name" id="name" class="form-control" required type="text" placeholder="@Localizer["Full Name"]">
+            </div>
+
+            <div class="col-xs-6">
+                <input name="expiry" id="expiry" class="form-control" required type="text" placeholder="MM/YYYY">
+            </div>
+            <div class="col-xs-6">
+                <input name="cvc" id="cvc" class="form-control" required type="text" placeholder="CVC">
+            </div>
+
+            <div class="col-xs-12" style="padding-right: 6px; padding-left: 6px;">
+                <select asp-for="DealsId" class="select2">
+                    <optgroup label="@Localizer["Bought Artifacts"]">
+                        @foreach (var price in ArtifactList)
+                        {
+                            <option value="@price.Id">@price.Artifacts @Localizer["Artifacts"] : @price.Price.ToString("F") €</option>
+                        }
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <div class="row xs-pt-15">
+            <p class="text-right">
+                <button class="btn btn-space btn-primary" type="submit">@Localizer["Buy"]</button>
+            </p>
+        </div>
+    </div>
+</form>
+

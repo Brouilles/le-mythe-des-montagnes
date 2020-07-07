@@ -1,0 +1,39 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using static Henagone_WebGame.Controllers.GameController
+@model string
+@{ 
+    int price = 0;
+    using (var context = new SiteDbContext())
+    {
+        var onQuest = context.OnQuest
+            .Where(r => r.TeamsId == Convert.ToInt32(Model))
+            .Select(r => r).First();
+
+        var questData = context.CompanionQuests
+            .Where(r => r.Id == onQuest.QuestId)
+            .Select(r => r).First();
+
+        price = (int)Math.Ceiling(((TimeSpan.FromMinutes(questData.Time).TotalSeconds - (DateTime.Now - onQuest.Start).TotalSeconds) / 900) * 3);
+        if (price < 1) { price = 1; }
+    }
+}
+
+<div id="md-accelerateCompanionQuest" class="modal-container modal-full-color modal-full-color-success modal-effect-7">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" data-dismiss="modal" aria-hidden="true" class="close modal-close"><span class="mdi mdi-close"></span></button>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <span class="modal-main-icon mdi mdi-check"></span>
+                <h3>@Localizer["Speed up the companion quest ?"]</h3>
+                <p>@Localizer["To speed up the companion quest you have to pay {0} artifacts. However, this does not affect the success rate of the quest.", price]</p>
+                <div class="xs-mt-50">
+                    <button type="button" data-dismiss="modal" class="btn btn-success btn-space modal-close">@Localizer["Cancel"]</button>
+                    <a onclick="AccelerateCompanionQuest(@Model)" class="btn btn-default btn-space modal-close">@Localizer["Proceed ({0} artifacts)", price]</a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer"></div>
+    </div>
+</div>

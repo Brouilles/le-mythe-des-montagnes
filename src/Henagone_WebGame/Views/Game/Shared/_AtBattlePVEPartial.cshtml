@@ -1,0 +1,192 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    AtBattlePVE atBattlePVE;
+    Characters user;
+    Monsters monster;
+    using (var context = new SiteDbContext())
+    {
+        atBattlePVE = context.AtBattlePVE
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).FirstOrDefault();
+
+        user = context.Characters
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).First();
+
+        monster = context.Monsters
+            .Where(r => r.Id == atBattlePVE.EntityId)
+            .Select(r => r).FirstOrDefault();
+    }
+
+    UserSkillStruct[] array = {
+        new UserSkillStruct { PlayerSkillId = 1, SkillId = user.FirstSkillId },
+        new UserSkillStruct { PlayerSkillId = 2, SkillId = user.SecondSkillId },
+        new UserSkillStruct { PlayerSkillId = 3, SkillId = user.ThirdSkillId },
+    };
+    array = array.OrderBy(n => n.SkillId).ToArray();
+}
+
+<div class="row">
+    <div class="col-md-5">
+            <div class="svgBackgroundOver" style="position:relative;">
+                <div style="text-align: center; right: 0; left:0; top: 0; bottom: 0; position:absolute;">
+                    <img class="avatarCard" style="width: 200px; margin: auto;" alt="User" src="~/images/avatars/@(user.AvatarId + ".card." + Util.LanguageSelection("en", "fr") + ".svg")" />
+                </div>
+                <div class="svgForegroundImg" style="text-align: center; right: 0; left:0; top: 0; bottom: 0; z-index:100; position:absolute;">
+                    <img id="atBattlePlayerSkill@(array[0].PlayerSkillId)" style="display: none;" alt="Skill" src="~/images/Game/Skills/Battle/@(array[0].SkillId + "." + Util.LanguageSelection("en", "fr") + ".svg")" />
+                    <img id="atBattlePlayerSkill@(array[1].PlayerSkillId)" style="display: none;" alt="Skill" src="~/images/Game/Skills/Battle/@(array[1].SkillId + "." + Util.LanguageSelection("en", "fr") + ".svg")" />
+                    <img id="atBattlePlayerSkill@(array[2].PlayerSkillId)" style="display: none;" alt="Skill" src="~/images/Game/Skills/Battle/@(array[2].SkillId + "." + Util.LanguageSelection("en", "fr") + ".svg")" />
+                </div>
+            </div>
+            <div style="text-align: center;">
+                @{
+                    for (int i = 0; i < 3; i++)
+                    {
+                        <text>
+                        <img id="skill@(array[i].PlayerSkillId)" onclick="atBattleSelectSkill(@(array[i].PlayerSkillId))" class="skillButton @Util.GetSkillType(array[i].SkillId)" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(array[i].SkillId, User).Title" data-content="@Util.GetSkillData(array[i].SkillId, User).Description" src="~/images/Game/Skills/@(array[i].SkillId + ".svg")" />
+                        </text>
+                        if (i == 1)
+                        { <text><br /></text> }
+                    }
+                }
+            </div>
+            <h2>@UserManager.GetUserName(User)</h2>
+            <div class="row row-centered">
+                <div class="col-xs-12 col-centered">
+                    <div class="progress">
+                        <div id="BattleUserLifeDiv" class="progress-bar progress-bar-danger" style="width: 0%">@Localizer["Life"] <span id="BattleUserLifeText">-</span></div>
+                    </div>
+                    <div class="progress">
+                        <div id="BattleUserEnergyDiv" class="progress-bar progress-bar-warning" style="width: 0%">@Localizer["Energy"] <span id="BattleUserEnergyText">-</span></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td align="center">@Localizer["Strength"]: <span id="UserStrength">@user.Strength</span> (+<span id="UserStrengthAdd">@user.StrengthAdd</span>)</td>
+                                    <td align="center">@Localizer["Defense"]: <span id="UserDefense">@user.Defense</span> (+<span id="UserDefenseAdd">@user.DefenseAdd</span>)</td>
+                                    <td align="center">@Localizer["Energy"]: @user.Energy (+<span id="UserEnergyAdd">@user.EnergyAdd</span>)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="col-md-2">
+        <div style="text-align: center;">
+            <div class="widget-chart-container">
+                <div id="laps-left" style="height: 178px;"></div>
+                <div id="lapsLeftDiv" style="font-size: 45px;" class="chart-pie-counter">20</div>
+            </div>
+            <div id="BattleTimer"></div>
+            <div class="btn-group">
+                <button id="speedBtn2" onclick="atBattleSelectSpeed(2)" class="btn btn-primary" type="button">2s</button>
+                <button id="speedBtn6" onclick="atBattleSelectSpeed(6)" class="btn btn-success" type="button">6s</button>
+                <button id="speedBtn9" onclick="atBattleSelectSpeed(9)" class="btn btn-primary" type="button">9s</button>
+            </div>
+        </div>
+        <div id="BattleBtn">
+            <button onclick="AtBattlePVEBuff()" class="btn btn-rounded btn-space btn-success">
+                <i class="icon icon-left mdi mdi-check"></i> Boost (1 artifact)
+            </button>
+            <button class="btn btn-space btn-warning" onclick="atBattleAbandonConfirm()"> @Localizer["Abandon"]</button>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="svgBackgroundOver" style="position:relative;">
+            <div style="text-align: center; right: 0; left:0; top: 0; bottom: 0; position:absolute;">
+                <img class="avatarCard" style="width: 200px; margin: auto;" alt="Monster" src="~/uploads/game/cards/monsters/@(monster.Id + Util.LanguageSelection(".en", ".fr")  + ".svg")" />
+            </div>
+            <div class="svgForegroundImg" style="text-align: center; right: 0; left:0; top: 0; bottom: 0; z-index:100; position:absolute;">
+                <img id="atBattleMonsterSkill1" style="display: none;" alt="Skill" src="~/images/Game/Skills/Battle/@(monster.FirstSkillId + "." + Util.LanguageSelection("en", "fr") + ".svg")" />
+                <img id="atBattleMonsterSkill2" style="display: none;" alt="Skill" src="~/images/Game/Skills/Battle/@(monster.SecondSkillId + "." + Util.LanguageSelection("en", "fr") + ".svg")" />
+                <img id="atBattleMonsterSkill3" style="display: none;" alt="Skill" src="~/images/Game/Skills/Battle/@(monster.ThirdSkillId + "." + Util.LanguageSelection("en", "fr") + ".svg")" />
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <img type="button" class="popoverJsInDrop skillButton @Util.GetSkillType(monster.FirstSkillId) active" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="@Util.GetSkillData(monster.FirstSkillId, User).Title" src="~/images/Game/Skills/@(monster.FirstSkillId + ".svg")" />
+            <img type="button" class="popoverJsInDrop skillButton @Util.GetSkillType(monster.SecondSkillId) active" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="@Util.GetSkillData(monster.SecondSkillId, User).Title" src="~/images/Game/Skills/@(monster.SecondSkillId + ".svg")" />
+            <br/>
+            <img type="button" class="popoverJsInDrop skillButton @Util.GetSkillType(monster.ThirdSkillId) active" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="@Util.GetSkillData(monster.ThirdSkillId, User).Title" src="~/images/Game/Skills/@(monster.ThirdSkillId + ".svg")" />
+        </div>
+        <h2>@Util.LanguageSelection(monster.TitleEn, monster.TitleFr)</h2>
+        <div class="row row-centered">
+            <div class="col-xs-12 col-centered">
+                <div class="progress">
+                    <div id="BattleMonsterLifeDiv" class="progress-bar progress-bar-danger" style="width: 0%">@Localizer["Life"] <span id="BattleMonsterLifeText">-</span></div>
+                </div>
+                <div class="progress">
+                    <div id="BattleMonsterEnergyDiv" class="progress-bar progress-bar-warning" style="width: 0%">@Localizer["Energy"] <span id="BattleMonsterEnergyText">-</span></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td align="center">@Localizer["Strength"]: @monster.Strength</td>
+                                <td align="center">@Localizer["Defense"]: @monster.Defense</td>
+                                <td align="center">@Localizer["Energy"]: @monster.Energy</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover();
+        atBattleSelectSkill(@array[0].PlayerSkillId);
+
+        // Pie
+        var data = [
+            { label: "Rest", data: 20 },
+            { label: "Pass", data: 0 },
+        ];
+
+        $.plot('#laps-left', data, {
+            series: {
+                pie: {
+                    radius: 0.75,
+                    innerRadius: 0.58,
+                    show: true,
+                    highlight: {
+                        opacity: 0.1
+                    },
+                    label: {
+                        show: false
+                    }
+                }
+            },
+            grid: {
+                hoverable: true
+            },
+            legend: {
+                show: false
+            },
+            colors: [App.color.success, "#f5f5f5"]
+        });
+
+        // UI 
+        $('.svgForegroundImg img').width($('.avatarCard').width());
+        $('.svgBackgroundOver').height($('.avatarCard').height());
+        UICenterDiv('#heroQuestDivCenter');
+        window.onresize = function (event) {
+            $('.svgForegroundImg img').width($('.avatarCard').width());
+            $('.svgBackgroundOver').height($('.avatarCard').height());
+            UICenterDiv('#heroQuestDivCenter');
+        }
+        $('img.avatarCard').bind('load', function () {
+            $('.svgForegroundImg img').width($('.avatarCard').width());
+            $('.svgBackgroundOver').height($('.avatarCard').height());
+            UICenterDiv('#heroQuestDivCenter');
+        });
+    })
+</script>

@@ -1,0 +1,115 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@using static Henagone_WebGame.Controllers.GameController
+@model string
+@{
+    NarrativeQuest quest = null;
+    string errorMsg = null;
+    using (var context = new SiteDbContext())
+    {
+        var NarrativeQuestStep = context.Characters
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r.NarrativeQuestStep).First();
+
+        if (NarrativeQuestStep <= int.Parse(Model)) {
+            var atQuest = context.AtNarrativeQuest
+                .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(r => r).FirstOrDefault();
+
+            var atBattle = context.AtBattlePVE
+                .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(r => r).FirstOrDefault();
+
+            var atHeroQuest = context.HeroesQuestsState
+                .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) && r.State != 0)
+                .Count();
+
+            if (atHeroQuest == 0)
+            {
+                if (atBattle != null)
+                {
+                    var player = context.Characters.Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                        .Select(r => r).First();
+
+                    player.Life = atBattle.UserLife;
+                    context.Remove(atBattle);
+                    context.Update(player);
+                }
+
+                if (atQuest != null)
+                {
+                    if (atQuest.Step == 0 && atQuest.QuestId == int.Parse(Model))
+                    {
+                        quest = context.NarrativeQuest
+                            .Where(r => r.Id == int.Parse(Model))
+                            .Select(r => r).FirstOrDefault();
+                    }
+                    else { context.Remove(atQuest); atQuest = null; }
+                }
+
+                if (atQuest == null)
+                {
+                    quest = context.NarrativeQuest
+                        .Where(r => r.Id == int.Parse(Model))
+                        .Select(r => r).FirstOrDefault();
+
+                    if (quest != null)
+                    {
+                        AtNarrativeQuest newAtQuest = new AtNarrativeQuest
+                        {
+                            UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                            QuestId = (int)quest.Id,
+                            Step = -1,
+                            StartTimer = null
+                        };
+                        context.Add(newAtQuest);
+                    }
+                    else { errorMsg = Localizer["Internal error: Quest not found."].Value; }
+                }
+            }
+            else { errorMsg = Localizer["A hero's quest is in progress."].Value; }
+
+            context.SaveChanges();
+        }
+    }
+}
+<div class="panel panel-default" style="margin-bottom: 0;">
+    <div class="panel-heading panel-heading-divider">
+        <div class="tools"><span onclick="CloseAreaAccept()" class="icon mdi mdi-close"></span></div>
+        <div class="title">@if (errorMsg == null) { @Util.LanguageSelection(quest.TitleEn, quest.TitleFr) }</div>
+    </div>
+    <div class="panel-body">
+        @if (errorMsg == null) { <img id="questImgBackground" alt="Quest Background" style="width: 100%; visibility: hidden;" src="~/images/Game/Quest/background.svg" /> }
+        <div id="heroQuestDivCenter">
+            @if (errorMsg == null)
+            {
+                <script> GameUpdateLife(); NarrativeQuestNextStep();</script>
+            }
+            else
+            {
+                <p>@errorMsg</p>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        UICenterDiv('#heroQuestDivCenter');
+        window.onresize = function (event) {
+            UICenterDiv('#heroQuestDivCenter');
+        }
+
+        $("#heroQuestDivCenter").find('img').each(function () {
+            var fakeSrc = $(this).attr('src');
+            $("<img/>").attr("src", fakeSrc).css('display', 'none').load(function () {
+                images_loaded++;
+                if (images_loaded >= total_images) {
+                    UICenterDiv('#heroQuestDivCenter');
+                }
+            });
+
+        });
+    });
+</script>

@@ -1,0 +1,68 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    var charactersList = new Characters[3];
+    var goldList = new Gold[3];
+    var artifactList = new int[3];
+    using (var context = new SiteDbContext())
+    {
+        var ExeptUsers = new List<string>();
+
+        goldList = context.Gold
+            .OrderByDescending(r => r.Number)
+            .Select(r => r).Take(3).ToArray();
+
+        for(int i = 0; i < goldList.Length; i++)
+        {
+            var player = context.Characters
+                .Where(r => r.UserId == goldList[i].UserId)
+                .Select(r => r).FirstOrDefault();
+
+            if (player != null)
+            {
+                var artifact = context.Artifacts
+                    .Where(r => r.UserId == goldList[i].UserId)
+                    .Select(r => r).First();
+
+                charactersList[i] = player;
+                artifactList[i] = artifact.Number;
+            }
+            else {
+                ExeptUsers.Add(goldList[i].UserId);
+                i = 0;
+                goldList = context.Gold
+                    .OrderByDescending(r => r.Number)
+                    .Where(r => !(ExeptUsers.Any(x => x == r.UserId)))
+                    .Select(r => r).Take(3).ToArray();
+            }
+        }
+    }
+}
+
+<div class="container">
+    <div class="col-md-12" style="text-align: center;">
+        <h2>@Localizer["The richest players"] ...</h2>
+    </div>
+
+    @for(int i = 0; i < goldList.Length; i++)
+    {
+        <div class="col-md-4 col-sm-6">
+            <div style="text-align: center;">
+                <img alt="Avatar" src="@("/images/avatars/" + charactersList[i].AvatarId + ".svg")" style="width: 45%;" /><br />
+                <b>@UserManager.FindByIdAsync(charactersList[i].UserId).Result.UserName</b>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tbody>
+                            <tr id="goldandartifacts">
+                                <td class="user-avatar"><img alt="Gold" src="~/images/Game/gold.svg" /><span>@goldList[i].Number</span> @Localizer["Gold"]</td>
+                                <td class="user-avatar"><img alt="Artifact" src="~/images/Game/artifact.svg" style="transform: scale(1.5);" /><span>@artifactList[i]</span> @Localizer["Artifacts"]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

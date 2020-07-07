@@ -1,0 +1,23 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using static Henagone_WebGame.Controllers.GameController
+@model string
+
+<div id="md-deleteCompanion" class="modal-container modal-full-color modal-full-color-danger modal-effect-7">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" data-dismiss="modal" aria-hidden="true" class="close modal-close"><span class="mdi mdi-close"></span></button>
+        </div>
+        <div class="modal-body">
+            <div class="text-center">
+                <span class="modal-main-icon mdi mdi-close-circle-o"></span>
+                <h3>@Localizer["Send back your companion"] !</h3>
+                <p>@Localizer["Once you send back your account, there is no going back. Please be certain."]</p>
+                <div class="xs-mt-50">
+                    <button type="button" data-dismiss="modal" class="btn btn-default btn-space modal-close">@Localizer["Cancel"]</button>
+                    <a onclick="CompanionSendBack(@Model)" class="btn btn-success btn-space modal-close">@Localizer["Proceed"]</a>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer"></div>
+    </div>
+</div>

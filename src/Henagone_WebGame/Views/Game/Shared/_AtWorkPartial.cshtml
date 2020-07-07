@@ -1,0 +1,19 @@
+﻿<div id="atWorkDivCenter">
+    <h3>@Localizer["Your character works !"]</h3>
+    <div id="atWorkProgressBar">
+        <div class="progress-bar progress-bar-primary progress-bar-striped active"> 0%</div>
+    </div>
+    <div id="atWorkBtn">
+        <a class="btn btn-space btn-danger" onclick="StopJob()">@Localizer["Cancel job"]</a>
+        <a onclick="AccelerateJob()" class="btn btn-space btn-success"><i class="icon icon-left mdi mdi-check"></i> @Localizer["Finish now"] (<span id="atWorkArtifactPrice">-</span> @Localizer["artifacts"])</a>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        UICenterDiv('#atWorkDivCenter');
+        window.onresize = function (event) {
+            UICenterDiv('#atWorkDivCenter');
+        }
+    });
+</script>

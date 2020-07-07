@@ -1,0 +1,369 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@model Henagone_WebGame.Models.GameViewModels.Jobs
+@{
+    ViewData["Title"] = "Système de combat [Debug]";
+}
+
+<div id="adminDiv" class="row">
+    <div class="col-md-6">
+        <div class="panel panel-border-color panel-border-color-primary">
+            <div class="panel-heading">Joueur</div>
+            <div class="panel-body">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Vitalité</label>
+                        <input id="Vitality" name="Vitality" value="0" class="form-control" type="number">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Force</label>
+                        <input id="Strength" name="Strength" value="1" class="form-control" type="number">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Défense</label>
+                        <input id="Defense" name="Defense" value="1" class="form-control" type="number">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Energie</label>
+                        <input id="Energy" name="Energy" value="1" class="form-control" type="number">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel panel-border-color panel-border-color-danger">
+            <div class="panel-heading">Monstre</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>Monstre</label>
+                    <select id="MonsterId" name="MonsterId" class="form-control">
+                        @{
+                            List<Monsters> MonstersList;
+                            using (var context = new SiteDbContext())
+                            {
+                                MonstersList = context.Monsters
+                                    .OrderByDescending(r => r.Id)
+                                    .Select(r => r).ToList();
+                            }
+                        }
+                        @foreach (var item in MonstersList)
+                        {
+                            <option value="@item.Id">@item.TitleFr</option>
+                        }
+                    </select>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="panel panel-contrast">
+            <div class="panel-heading panel-heading-contrast">Combat<span class="panel-subtitle">Ne pas être en quête de héros lors de l'utilisation du système</span></div>
+            <div id="heroQuestDivCenter" class="panel-body" style="text-align: center; width: 100%;">
+                <h2>Pas de combat en cours !</h2>
+                <button onclick="StartBattle()" class="btn btn-space btn-primary">Démarrage du combat</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Modals {
+    <div id="md-atBattleAbandon" class="modal-container modal-full-color modal-full-color-danger modal-effect-1" style="perspective: 1300px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close modal-close" aria-hidden="true" type="button" data-dismiss="modal"><span class="mdi mdi-close"></span></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <span class="modal-main-icon mdi mdi-alert-triangle"></span>
+                    <h3>@Localizer["Do you really want to abandon the fight?"]</h3>
+                    <p>@Localizer["By abandoning the fight you lose it."]</p>
+                    <div class="xs-mt-50">
+                        <button class="btn btn-default btn-space modal-close" type="button" data-dismiss="modal">@Localizer["Cancel"]</button>
+                        <button class="btn btn-success btn-space modal-close" type="button" onclick="atBattleAbandon()" data-dismiss="modal">@Localizer["Abandon"]</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+    <div class="modal-overlay"></div>
+}
+
+@section StyleSheet {
+    <link rel="stylesheet" type="text/css" href="~/lib/jquery.gritter/css/jquery.gritter.css" asp-append-version="true"/>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery.niftymodals/dist/jquery.niftymodals.min.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/lib/jquery.gritter/js/jquery.gritter.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/lib/jquery.progressTimer/js/jquery.progressTimer.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/lib/jquery-flot/jquery.flot.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/lib/jquery-flot/jquery.flot.pie.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/lib/jquery-flot/jquery.flot.resize.js" type="text/javascript" asp-append-version="true"></script>
+
+    <script>
+        var currentBattle = false;
+        var currentSkill = 1;
+        var g_currentTimer = 6;
+        $('body').on('click', '.popoverJsInDrop', function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        });
+        $.fn.niftyModal('setDefaults', {
+            overlaySelector: '.modal-overlay',
+            closeSelector: '.modal-close',
+            classAddAfterOpen: 'modal-show'
+        });
+        function ResetUI() {
+            $('#heroQuestDivCenter').empty();
+            $('#heroQuestDivCenter').html('<h2>Pas de combat en cours !</h2> <button onclick="StartBattle()" class="btn btn-space btn-primary">Démarrage du combat</button>');
+        }
+        function UICenterDiv(param) { }
+
+        function StartBattle() {
+            currentSkill = 1;
+            $.ajax({
+                data: {
+                    playerVitality: $('#Vitality').val(), playerStrength: $('#Strength').val(), playerDefense: $('#Defense').val(),
+                    playerEnergy: $('#Energy').val(), monsterId: $('#MonsterId').val()
+                },
+                url: '/Admin/AjaxCreateBattle',
+                success: function (data) {
+                    $('#heroQuestDivCenter').empty();
+                    $('#heroQuestDivCenter').load("/Game/GetModule?partialName=_AtBattlePVEPartial.cshtml", function () {
+                        $.getJSON("/Game/AjaxRealTimeBattle", function (result) {
+                            $.each(result, function (key, val) {
+                                if (val.finished != "true") {
+                                    currentBattle = true;
+                                    // User
+                                    $('#BattleUserLifeDiv').css('width', val.UserLifePercentage + '%');
+                                    $('#BattleUserLifeText').text(val.UserLife);
+
+                                    $('#BattleUserEnergyDiv').css('width', val.UserEnergyPercentage + '%');
+                                    $('#BattleUserEnergyText').text(val.UserEnergy);
+
+                                    // Monster
+                                    $('#BattleMonsterLifeDiv').css('width', val.EntityLifePercentage + '%');
+                                    $('#BattleMonsterLifeText').text(val.EntityLife);
+
+                                    $('#BattleMonsterEnergyDiv').css('width', val.EntityEnergyPercentage + '%');
+                                    $('#BattleMonsterEnergyText').text(val.EntityEnergy);
+
+                                    // Timer
+                                    $('#BattleTimer').progressTimer({
+                                        timeLimit: g_currentTimer,
+                                        baseStyle: 'progress-bar-primary',
+                                        warningStyle: 'progress-bar-primary',
+                                        completeStyle: 'progress-bar-primary',
+                                        allTheTime: function (settings) {
+                                            if (g_currentTimer != settings.timeLimit) {
+                                                settings.timeLimit = g_currentTimer;
+                                            }
+                                        },
+                                        onFinish: function () {
+                                            BattleUpdateProgressTimer('#BattleTimer', new Date(), 'primary');
+                                            AtBattlePVE();
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $.gritter.add({
+                        title: 'Erreur',
+                        text: 'Internal Error: ' + errorThrown,
+                        class_name: 'color danger'
+                    });
+                }
+            });
+        }
+
+        // Methods
+        function atBattleSelectSkill(skillId) {
+            $('#skill' + currentSkill).removeClass('active');
+            currentSkill = skillId;
+            $('#skill' + currentSkill).addClass('active');
+        }
+
+        function atBattleSelectSpeed(speed) {
+            $('#speedBtn' + g_currentTimer).removeAttr('class');
+            $('#speedBtn' + g_currentTimer).addClass('btn btn-primary');
+            g_currentTimer = speed;
+
+            $('#speedBtn' + g_currentTimer).removeAttr('class');
+            $('#speedBtn' + g_currentTimer).addClass('btn btn-success');
+        }
+
+        function atBattleAbandonConfirm() {
+            $('#md-atBattleAbandon').niftyModal();
+        }
+
+        function atBattleAbandon() {
+            $.ajax({
+                url: '/Game/AjaxRealTimeBattleAbandon',
+                success: function (data) {
+                    $.each(data, function (key, val) {
+                        if (val.Success == "true") {
+                            $('#BattleUserLifeDiv').css('width', '0%');
+                            $('#BattleUserLifeText').text('0');
+                        }
+                        else { NotificationAlert(val.Title, val.Msg, NotificationType.Alert); }
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    NotificationAlert("Error", "Internal Error: " + errorThrown, NotificationType.Alert);
+                }
+            });
+        }
+
+        var NotificationType;
+        (function (NotificationType) {
+            NotificationType[NotificationType["Success"] = 0] = "Success";
+            NotificationType[NotificationType["Information"] = 1] = "Information";
+            NotificationType[NotificationType["Alert"] = 2] = "Alert";
+        })(NotificationType || (NotificationType = {}));
+
+        function NotificationAlert(title, msg, type, native) {
+            if (type === void 0) { type = NotificationType.Information; }
+            if (native === void 0) { native = false; }
+            var notificationTypeColor = "primary";
+            if (type == NotificationType.Success) {
+                notificationTypeColor = "success";
+            }
+            else if (type == NotificationType.Alert) {
+                notificationTypeColor = "danger";
+            }
+            $.gritter.add({
+                title: title,
+                text: msg,
+                class_name: 'color ' + notificationTypeColor
+            });
+            if (native) {
+                if ('Notification' in window) {
+                    Notification.requestPermission(function (permission) {
+                        var notification = new Notification(title, { body: msg });
+                    });
+                }
+            }
+        }
+
+        // Battle PVE
+        function AtBattlePVE() {
+            $.getJSON("/Game/AjaxRealTimeBattle?userSkill=" + currentSkill, function (result) {
+                $.each(result, function (key, val) {
+                    if (val.finished != "true") {
+                        // Show card
+                        $('#atBattlePlayerSkill' + currentSkill).fadeIn("fast", function () {
+                            $('#atBattlePlayerSkill' + currentSkill).delay(600).fadeOut(400);
+                        });
+
+                        $('#atBattleMonsterSkill' + val.EntitySkillId).fadeIn("fast", function () {
+                            $('#atBattleMonsterSkill' + val.EntitySkillId).delay(600).fadeOut(400);
+                        });
+                        
+                        // General
+                        $('#lapsLeftDiv').text(parseInt($('#lapsLeftDiv').text()) - 1);
+                        var data = [
+                            { label: "Rest", data: parseInt($('#lapsLeftDiv').text()) },
+                            { label: "Pass", data: (20 - parseInt($('#lapsLeftDiv').text())) },
+                        ];
+                        $.plot('#laps-left', data, {
+                            series: {
+                                pie: {
+                                    radius: 0.75,
+                                    innerRadius: 0.58,
+                                    show: true,
+                                    highlight: { opacity: 0.1 },
+                                    label: { show: false }
+                                }
+                            },
+                            grid: { hoverable: true },
+                            legend: { show: false },
+                            colors: [App.color.success, "#f5f5f5"]
+                        });
+
+                        // User
+                        $('#BattleUserLifeDiv').css('width', val.UserLifePercentage + '%');
+                        $('#BattleUserLifeText').text(val.UserLife);
+
+                        $('#BattleUserEnergyDiv').css('width', val.UserEnergyPercentage + '%');
+                        $('#BattleUserEnergyText').text(val.UserEnergy);
+
+                        // Monster
+                        $('#BattleMonsterLifeDiv').css('width', val.EntityLifePercentage + '%');
+                        $('#BattleMonsterLifeText').text(val.EntityLife);
+
+                        $('#BattleMonsterEnergyDiv').css('width', val.EntityEnergyPercentage + '%');
+                        $('#BattleMonsterEnergyText').text(val.EntityEnergy);
+                    }
+                    else {
+                        if (currentBattle == true) {
+                            currentBattle = false;
+                            var txtString = "";
+                            if (val.Win == "false") {
+                                txtString += "<h3>" + val.HeaderTitle + "</h3><br/>"
+                            }
+                            txtString += '<a onclick="ResetUI()" class="btn btn-space btn-primary" > ' + val.BtnNextStep + '</a>';
+
+                            $('#heroQuestDivCenter').prepend(txtString);
+                        }
+                    }
+                });
+            });
+        }
+
+        function BattleUpdateProgressTimer(div, userTime, barStyle) {
+            if (currentBattle == true) {
+                $(div).progressTimer({
+                    timeLimit: g_currentTimer,
+                    extra: 100,
+                    baseStyle: 'progress-bar-' + barStyle,
+                    warningStyle: 'progress-bar-' + barStyle,
+                    completeStyle: 'progress-bar-' + barStyle,
+                    allTheTime: function (settings) {
+                        if (g_currentTimer != settings.timeLimit) {
+                            settings.timeLimit = g_currentTimer;
+                        }
+                    },
+                    onFinish: function () {
+                        BattleUpdateProgressTimer(div, new Date(), barStyle);
+                        AtBattlePVE();
+                    }
+                });
+            }
+        }
+
+        function AtBattlePVEBuff() {
+            $.ajax({
+                url: '/Game/AjaxRealTimeBattleBuff',
+                success: function (data) {
+                    $.each(data, function (key, val) {
+                        if (val.Success == "true") {
+                            NotificationAlert(val.Title, val.Msg, NotificationType.Success);
+                            $('#BattleUserEnergyDiv').css('width', '100%');
+                            $('#BattleUserEnergyText').text('100%');
+
+                            $('#UserStrengthAdd').text(parseInt($('#UserStrength').text()) + parseInt($('#UserStrengthAdd').text()));
+                            $('#UserDefenseAdd').text(parseInt($('#UserDefense').text()) + parseInt($('#UserDefenseAdd').text()));
+                            GameUpdateArtifacts();
+                        }
+                        else { NotificationAlert(val.Title, val.Msg, NotificationType.Alert); }
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    NotificationAlert("Error", "Internal Error: " + errorThrown, NotificationType.Alert);
+                }
+            });
+        }
+    </script>
+}

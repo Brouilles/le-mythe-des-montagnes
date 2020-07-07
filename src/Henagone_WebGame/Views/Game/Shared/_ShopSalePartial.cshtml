@@ -1,0 +1,65 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    int i = 0;
+    List<int> InventoryItemsIdList;
+    List<Items> InventoryItemsList = new List<Items>();
+    using (var context = new SiteDbContext())
+    {
+        InventoryItemsIdList = context.Inventory
+            .OrderByDescending(r => r.Id)
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r.ItemId).ToList();
+
+        @foreach (var itemId in InventoryItemsIdList)
+        {
+            InventoryItemsList.Add(context.Items.Where(r => r.Id == itemId).Select(r => r).FirstOrDefault());
+        }
+    }
+}
+
+<div style="padding: 20px;">
+    <div class="owl-saleList">
+        @{
+            <div class="item">
+                <div>
+                    <img style="width: 100%;" alt="Card" src="~/images/Game/Shop/@(Util.LanguageSelection("Card_EN_Artifact", "Card_FR_Artefact") + ".svg")" />
+                </div>
+                <div style="height: 100%; text-align: center;">
+                    <button onclick="ConvertArtifactToGold()" class="btn btn-space btn-success">@Localizer["Convert {0} artifacts to {1} gold", 22, 100]</button>
+                </div>
+            </div>
+
+            foreach (var item in InventoryItemsList)
+            {
+                <text>
+                    <div class="item" id="@("SaleItem" + i)">
+                        <div>
+                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/items/@(item.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+                            <div id="@("saleItemPopup" + item.Id)" class="popover itemDescription"> <h3 class="popover-title">@Util.LanguageSelection(item.TitleEn, item.TitleFr) <span onclick="SaleItemDescription(@item.Id)" class="mdi mdi-close"></span></h3> <div class="popover-content"> <p>@Html.Raw(Util.ItemDescription(item))</p> </div> </div>
+                        </div>
+                        <div style="height: 100%; text-align: center;">
+                            <button onclick="SaleItem(@item.Id, @i)" class="btn btn-space btn-success">@Localizer["Sale"] (@item.Sale @Localizer["Gold"])</button>
+                            <button onclick="SaleItemDescription(@item.Id)" class="btn btn-space btn-primary">@Localizer["Description"]</button>
+                        </div>
+                    </div>
+                </text>
+                i++; 
+            }
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.popoverJs').click(function (e) { e.preventDefault(); });
+        $(".popoverJs").popover({ html: true });
+        $(".owl-saleList").owlCarousel({
+            items: 4,
+            navigation: true,
+            responsive: true,
+            navigationText: ["@Localizer["Prev"]","@Localizer["Next"]"]
+        });
+    });
+</script>

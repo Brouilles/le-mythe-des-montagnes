@@ -1,0 +1,36 @@
+﻿@using Henagone_WebGame.Models.ShopViewModels
+@{
+    List<ArtifactsPrices> ArtifactList;
+    using (var context = new SiteDbContext())
+    {
+        ArtifactList = context.ArtifactsPrices
+            .OrderBy(r => r.Price)
+            .Select(r => r).ToList();
+    }
+}
+<div style="text-align: center;">
+    <img src="~/images/Shop/paypal_logo.png" alt="Paypal" class="logo-img">
+</div>
+<form asp-controller="Shop" asp-action="PaidWithPaypal" method="post">
+    <div class="splash-container">
+        <div class="form-group row">  
+            <div class="col-xs-12" style="padding-right: 6px; padding-left: 6px;">
+                <select name="DealsId" class="select2">
+                    <optgroup label="@Localizer["Bought Artifacts"]">
+                        @foreach (var price in ArtifactList)
+                        {
+                            <option value="@price.Price">@price.Artifacts @Localizer["Artifacts"] : @price.Price.ToString("F") €</option>
+                        }
+                    </optgroup>
+                </select>
+            </div>
+        </div>
+
+        <div class="row xs-pt-15">
+            <p class="text-right">
+                <button class="btn btn-space btn-primary" type="submit"><i class="icon icon-left mdi mdi-paypal-alt"></i> @Localizer["Buy on Paypal"]</button>
+            </p>
+        </div>
+    </div>
+</form>
+

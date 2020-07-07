@@ -1,0 +1,35 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    List<Teams> TeamCompanionsIdList;
+    List<Companions> CompanionsList = new List<Companions>();
+    List<int> CompanionsListId = new List<int>();
+    using (var context = new SiteDbContext())
+    {
+        TeamCompanionsIdList = context.Teams
+            .OrderByDescending(r => r.Id)
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) && r.Active == true)
+            .Select(r => r).ToList();
+
+        @foreach (var itemId in TeamCompanionsIdList)
+        {
+            CompanionsList.Add(context.Companions.Where(r => r.Id == itemId.CompanionId).Select(r => r).FirstOrDefault());
+            CompanionsListId.Add((int)itemId.Id);
+        }
+    }
+}
+
+
+@for (int i = 0; i < CompanionsListId.ToArray().Length; i++)
+{
+    <div class="row user-progress user-progress-small">
+        <div class="col-md-5">
+            <span class="title">@Util.LanguageSelection(CompanionsList.ElementAt(i).TitleEn, CompanionsList.ElementAt(i).TitleFr)</span>
+            <span style="float: right; margin-top: -10px;" id="@("onQuestBtn" + CompanionsListId.ElementAt(i))"></span>
+        </div>
+        <div id="@("onQuestProgressBar" + CompanionsListId.ElementAt(i))" class="col-md-7">
+            <button onclick="OpenCompanionQuestsWindow(@CompanionsListId.ElementAt(i), @CompanionsList.ElementAt(i).Class)" class="btn btn-space btn-default">@Localizer["Choose a mission"]</button>
+        </div>
+    </div>
+}

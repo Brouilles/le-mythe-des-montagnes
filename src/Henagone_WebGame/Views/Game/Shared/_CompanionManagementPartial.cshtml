@@ -1,0 +1,102 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    int spaceAvailable = 5, spaceUsed = 0;
+
+    List<Teams> TeamsListId;
+    List<Teams> TeamsListIdActive;
+
+    List<Companions> CompanionsList = new List<Companions>();
+    List<Companions> CompanionsListActive = new List<Companions>();
+    List<int> CompanionsListId = new List<int>();
+    List<int> CompanionsListIdActive = new List<int>();
+    using (var context = new SiteDbContext())
+    {
+        spaceAvailable += (int)UserManager.Users.Where(r => r.Id == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r.SlotForCompanion).FirstOrDefault();
+
+        TeamsListId = context.Teams
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) && r.Active == false)
+            .Select(r => r).ToList();
+
+        TeamsListIdActive = context.Teams
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) && r.Active == true)
+            .Select(r => r).ToList();
+
+        foreach (var item in TeamsListIdActive)
+        {
+            Companions tempItems = context.Companions.Where(r => r.Id == item.CompanionId).Select(r => r).FirstOrDefault();
+
+            CompanionsListActive.Add(tempItems);
+            CompanionsListIdActive.Add((int)item.Id);
+
+            spaceUsed += 1;
+        }
+
+        foreach (var item in TeamsListId)
+        {
+            Companions tempItems = context.Companions.Where(r => r.Id == item.CompanionId).Select(r => r).FirstOrDefault();
+
+            CompanionsList.Add(tempItems);
+            CompanionsListId.Add((int)item.Id);
+
+            spaceUsed += 1;
+        }
+    }
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading panel-heading-divider">
+        <div class="tools"><span onclick="CloseArea()" class="icon mdi mdi-close"></span></div>
+        <div class="title">@Localizer["Management of the companions"] <small>- Espace disponible: @(spaceUsed + "/" + spaceAvailable)</small></div>
+    </div>
+    <div class="panel-body">
+        <div class="owl-list">
+            <div class="item">
+                <div>
+                    <img style="width: 100%;" alt="Card" src="~/images/Game/Companion/@(Util.LanguageSelection("Carte_EN_compagnon", "Carte_FR_compagnon") + ".svg")" />
+                </div>
+                <div style="height: 100%; text-align: center;">
+                    <button onclick="AddCompanionSlot()" class="btn btn-space btn-success">@Localizer["Add Slot ({0} Artifacts)", 1]</button>
+                </div>
+            </div>
+
+            @for (int i = 0; i < CompanionsListActive.ToArray().Length; i++)
+            {
+                <div id="CompanionsItem@(CompanionsListIdActive.ElementAt(i))" class="item">
+                    <a style="cursor: pointer;">
+                        <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(CompanionsListActive.ElementAt(i).Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+                    </a>
+                    <div style="width: 100%; text-align: center;">
+                            <button id="@("FavoriteBtn" + CompanionsListIdActive.ElementAt(i))" onclick="CompanionDeleteToFavorite(@CompanionsListIdActive.ElementAt(i))" class="btn btn-space btn-success">@Localizer["Remove from favorites"]</button>
+                    </div>
+                </div>
+            }
+
+            @for (int i = 0; i < CompanionsList.ToArray().Length; i++)
+            {
+                <div id="CompanionsItem@(CompanionsListId.ElementAt(i))" class="item">
+                    <a style="cursor: pointer;">
+                        <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(CompanionsList.ElementAt(i).Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+                    </a>
+                    <div style="width: 100%; text-align: center;">
+                        <button id="@("FavoriteBtn" + CompanionsListId.ElementAt(i))" onclick="CompanionAddToFavorite(@CompanionsListId.ElementAt(i))" class="btn btn-space btn-success">@Localizer["Add to Favorites"]</button>
+                        <button onclick="CompanionSendBackConfirm(@CompanionsListId.ElementAt(i))" class="btn btn-space btn-danger">@Localizer["Send back"]</button>
+                    </div>
+                </div>
+            }
+        </div>  
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".owl-list").owlCarousel({
+            items: 4,
+            navigation: true,
+            responsive: true
+        });
+    });
+</script>

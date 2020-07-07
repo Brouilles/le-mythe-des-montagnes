@@ -1,0 +1,24 @@
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@{
+    ViewData["Title"] = Localizer["TERMS OF SERVICE"];
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-border-color panel-border-color-primary">
+            <div class="panel-heading panel-heading-divider">@Localizer["TERMS OF SERVICE"]</div>
+            <div class="panel-body">
+                @if (requestCulture.RequestCulture.Culture.TwoLetterISOLanguageName == "fr")
+                {
+                    @Html.Partial("Shared/_frPartial")
+                }
+                else
+                {
+                    @Html.Partial("Shared/_enPartial")
+                }
+            </div>
+        </div>
+    </div>
+</div>

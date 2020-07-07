@@ -1,0 +1,26 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims;
+@{
+    int? avatarId;
+    using (var context = new SiteDbContext())
+    {
+        avatarId = context.Characters
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r.AvatarId).FirstOrDefault();
+    }
+}
+
+<ul class="nav navbar-nav navbar-right be-user-nav">
+    <li class="dropdown">
+        <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><img id="layoutAvatar" src="@("/images/avatars/" + avatarId + ".svg")" alt="Avatar"><span class="user-name">@UserManager.GetUserName(User)</span></a>
+        <ul role="menu" class="dropdown-menu">
+            <li>
+                <div class="user-info">
+                    <div class="user-name">@UserManager.GetUserName(User)</div>
+                </div>
+            </li>
+            <li><a asp-area="" asp-controller="Manage" asp-action="Index"><span class="icon mdi mdi-settings"></span> @Localizer["Settings"]</a></li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()"><span class="icon mdi mdi-power"></span> @Localizer["Sign Out"]</a></li>
+        </ul>
+    </li>
+</ul>

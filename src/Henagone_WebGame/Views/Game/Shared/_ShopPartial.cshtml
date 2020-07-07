@@ -1,0 +1,124 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    List<Items> WeaponItemsList;
+    List<Items> ArmorItemsList;
+    List<Items> ObjectItemsList;
+
+    using (var context = new SiteDbContext())
+    {
+        WeaponItemsList = context.Items
+            .OrderByDescending(r => r.Purchase)
+            .Where(r => r.Type == 0)
+            .Select(r => r).ToList();
+
+        ArmorItemsList = context.Items
+            .OrderByDescending(r => r.Purchase)
+            .Where(r => r.Type == 1 || r.Type == 2 || r.Type == 3)
+            .Select(r => r).ToList();
+
+        ObjectItemsList = context.Items
+            .OrderByDescending(r => r.Purchase)
+            .Where(r => r.Type == 4 || r.Type == 5 || r.Type == 6)
+            .Select(r => r).ToList();
+    }
+}
+
+<div class="tab-container">
+    <ul class="nav nav-tabs" style="float: right;">
+        <li><a onclick="CloseArea()" title="Close" style="cursor: pointer;"><div class="tools"><span onclick="CloseArea()" class="icon mdi mdi-close" style="height: 17px; width: 17px; line-height: 17px; font-size: 13px;"></span></div></a></li>
+    </ul>
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#purchase" data-toggle="tab">@Localizer["Purchase"]</a></li>
+        <li><a href="#sale" data-toggle="tab" onclick="LoadSaleTab()">@Localizer["Sale"]</a></li>
+    </ul>
+    <div class="tab-content" style="padding: 0;">
+        <div id="purchase" class="tab-pane active cont">
+            <div class="tab-container">
+                <ul class="nav nav-tabs nav-tabs-success">
+                    <li class="active"><a href="#weapon1" data-toggle="tab">@Localizer["Weapon"]</a></li>
+                    <li><a href="#armor1" data-toggle="tab">@Localizer["Armor"]</a></li>
+                    <li><a href="#object1" data-toggle="tab">@Localizer["Object"]</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="weapon1" class="tab-pane active cont">
+                        <div class="owl-list">
+                            @foreach (var item in WeaponItemsList)
+                            {
+                                @if (item.Purchase != 0 || item.PurchaseArtifact != 0 || item.Purchase != 0 && item.PurchaseArtifact != 0)
+                                {
+                                    <div class="item">
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/items/@(item.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+                                            <div id="@("itemPopup" + item.Id)" class="popover itemDescription"> <h3 class="popover-title">@Util.LanguageSelection(item.TitleEn, item.TitleFr) <span onclick="ItemDescription(@item.Id)" class="mdi mdi-close"></span></h3> <div class="popover-content"> <p>@Html.Raw(Util.ItemDescription(item))</p> </div> </div>
+                                        </div>
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseItem(@item.Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@item.Purchase @Localizer["Gold"])</button>
+                                            @if (item.PurchaseArtifact > 0)
+                                            { <button onclick="PurchaseItemArtifact(@item.Id)" class="btn btn-space btn-warning">@Localizer["Purchase"] (@item.PurchaseArtifact @Localizer["Artifacts"])</button> }
+                                            <button onclick="ItemDescription(@item.Id)" class="btn btn-space @if (item.PurchaseArtifact > 0)
+                                            { <text>btn-block</text> } btn-primary">@Localizer["Description"]</button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div id="armor1" class="tab-pane cont">
+                        <div class="owl-list">
+                            @foreach (var item in ArmorItemsList)
+                            {
+                                @if (item.Purchase != 0 || item.PurchaseArtifact != 0)
+                                { 
+                                    <div class="item">
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/items/@(item.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+                                            <div id="@("itemPopup" + item.Id)" class="popover itemDescription"> <h3 class="popover-title">@Util.LanguageSelection(item.TitleEn, item.TitleFr) <span onclick="ItemDescription(@item.Id)" class="mdi mdi-close"></span></h3> <div class="popover-content"> <p>@Html.Raw(Util.ItemDescription(item))</p> </div> </div>
+                                        </div>
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseItem(@item.Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@item.Purchase @Localizer["Gold"])</button>
+                                            <button onclick="ItemDescription(@item.Id)" class="btn btn-space btn-primary">@Localizer["Description"]</button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div id="object1" class="tab-pane">
+                        <div class="owl-list">
+                            @foreach (var item in ObjectItemsList)
+                            {
+                                @if (item.Purchase != 0 || item.PurchaseArtifact != 0)
+                                { 
+                                    <div class="item">
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/items/@(item.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+                                            <div id="@("itemPopup" + item.Id)" class="popover itemDescription"> <h3 class="popover-title">@Util.LanguageSelection(item.TitleEn, item.TitleFr) <span onclick="ItemDescription(@item.Id)" class="mdi mdi-close"></span></h3> <div class="popover-content"> <p>@Html.Raw(Util.ItemDescription(item))</p> </div> </div>
+                                        </div>
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseItem(@item.Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@item.Purchase @Localizer["Gold"])</button>
+                                            <button onclick="ItemDescription(@item.Id)" class="btn btn-space btn-primary">@Localizer["Description"]</button>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="sale" class="tab-pane cont"></div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".owl-list").owlCarousel({
+            items: 4,
+            navigation: true,
+            responsive: true,
+            navigationText: ["@Localizer["Prev"]","@Localizer["Next"]"]
+        });
+    });
+</script>

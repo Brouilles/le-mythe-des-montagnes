@@ -1,0 +1,268 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@model Henagone_WebGame.Models.GameViewModels.NarrativeQuestStep
+@{
+    ViewData["Title"] = "Étape de quête narrative";
+}
+
+<div id="adminDiv" class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default panel-border-color panel-border-color-primary">
+            <div class="panel-heading panel-heading-divider">@if (ViewBag.Edit == "true") { <text>Modification</text> } else { <text>Création</text> } d'une étape de quête narrative</div>
+            <div class="panel-body">
+                @if (TempData["success"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["success"].ToString()
+                    </div>
+                }
+
+                <form asp-action="NarrativeQuestStep" enctype="multipart/form-data">
+                    <div asp-validation-summary="All" data-valmsg-summary="true" class="alert alert-danger">
+                        <ul>
+                            <li style="display: none;"></li>
+                        </ul>
+                    </div>
+
+                    @if (ViewBag.Edit == "true") { <input asp-for="Id" type="hidden"> }
+
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select asp-for="Type" class="form-control">
+                            <option value=""></option>
+                            <option value="1">Choix</option>
+                            <option value="2">Combat</option>
+                        </select>
+                    </div>
+
+                    <div id="choiceFormDiv" style="display: none;">
+                        <div class="form-group xs-pt-10">
+                            <label>Texture (.svg uniquement)</label>
+                            <input type="file" name="file" />
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description Français</label>
+                            <textarea class="form-control" asp-for="DescriptionFr"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description Anglais</label>
+                            <textarea class="form-control" asp-for="DescriptionEn"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Choix 1 FR</label>
+                            <input asp-for="ChoiceOneFr" class="form-control" type="text" placeholder="Choix">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombre de pas</label>
+                            <input asp-for="ChoiceOneIncrease" class="form-control" type="number">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dialogue 1 FR</label>
+                            <textarea class="form-control" asp-for="TextOneFr"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Choix 2 FR</label>
+                            <input asp-for="ChoiceTwoFr" class="form-control" type="text" placeholder="Choix">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombre de pas</label>
+                            <input asp-for="ChoiceTwoIncrease" class="form-control" type="number">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dialogue 2 FR</label>
+                            <textarea class="form-control" asp-for="TextTwoFr"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Choix 3 FR</label>
+                            <input asp-for="ChoiceThreeFr" class="form-control" type="text" placeholder="Choix">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombre de pas</label>
+                            <input asp-for="ChoiceThreeIncrease" class="form-control" type="number">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dialogue 3 FR</label>
+                            <textarea class="form-control" asp-for="TextThreeFr"></textarea>
+                        </div>
+
+                        <hr/>
+
+                        <div class="form-group">
+                            <label>Choix 1 EN</label>
+                            <input asp-for="ChoiceOneEn" class="form-control" type="text" placeholder="Choix">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dialogue 1 EN</label>
+                            <textarea class="form-control" asp-for="TextOneEn"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Choix 2 EN</label>
+                            <input asp-for="ChoiceTwoEn" class="form-control" type="text" placeholder="Choix">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dialogue 2 EN</label>
+                            <textarea class="form-control" asp-for="TextTwoEn"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Choix 3 EN</label>
+                            <input asp-for="ChoiceThreeEn" class="form-control" type="text" placeholder="Choix">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Dialogue 3 EN</label>
+                            <textarea class="form-control" asp-for="TextThreeEn"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div id="battleFormDiv" style="display: none;">
+                        <div class="form-group">
+                            <label>Nombre de pas</label>
+                            <input asp-for="BattleIncrease" class="form-control" type="number">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Monstre</label>
+                            <select asp-for="MonsterId" class="form-control">
+                                <option value=""></option>
+                                @{
+                                    List<Monsters> MonstersList;
+                                    using (var context = new SiteDbContext())
+                                    {
+                                        MonstersList = context.Monsters
+                                            .OrderByDescending(r => r.Id)
+                                            .Select(r => r).ToList();
+                                    }
+                                }
+                                @foreach (var item in MonstersList)
+                                {
+                                    <option value="@item.Id">@item.TitleFr</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row xs-pt-15">
+                        <div class="col-xs-12">
+                            <p class="text-right">
+                                @if (ViewBag.Edit == "true")
+                                { <text>
+                                    <a href="~/Admin/NarrativeQuestStep" class="btn btn-space btn-default">Annuler</a>
+                                    <button class="btn btn-space btn-primary" type="submit">Modifier</button>
+                                  </text> }
+                                else
+                                { <text><button class="btn btn-space btn-primary" type="submit">Ajouter</button></text> }
+                            </p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @await Html.PartialAsync("NarrativeQuestStep/_NarrativeQuestStepListPartial")
+</div>
+
+@section StyleSheet {
+    <link rel="stylesheet" type="text/css" href="~/lib/select2/css/select2.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/jquery.gritter/css/jquery.gritter.css" />
+}
+
+@section Modals {
+    <div id="md-deleteItem" class="modal-container modal-full-color modal-full-color-danger modal-effect-7">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" data-dismiss="modal" aria-hidden="true" class="close modal-close"><span class="mdi mdi-close"></span></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <span class="modal-main-icon mdi mdi-close-circle-o"></span>
+                    <h3>Voulez-vous vraiment supprimer l'étape de quête ?</h3>
+                    <div class="xs-mt-50">
+                        <button type="button" data-dismiss="modal" class="btn btn-default btn-space modal-close">Annuler</button>
+                        <button type="button" data-dismiss="modal" class="btn btn-success btn-space modal-close btn-ok">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+    <div class="modal-overlay"></div>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery.niftymodals/dist/jquery.niftymodals.min.js" type="text/javascript"></script>
+    <script src="~/lib/jquery.gritter/js/jquery.gritter.js" type="text/javascript"></script>
+    <script>
+        // Form
+        $('#Type').change(function () {
+            var v = $(this).val();
+            if (v == 1) {
+                $('#choiceFormDiv').show();
+                $('#battleFormDiv').hide();
+            }
+            else if (v == 2) {
+                $('#choiceFormDiv').hide();
+                $('#battleFormDiv').show();
+            }
+        });
+
+        // Dialog
+        var actuelId = 0;
+        function deleteItemConfirm() {
+            $.ajax({
+                data: { id: actuelId },
+                url: '/Admin/AjaxDeleteNarrativeQuestStep',
+                success: function (data) {
+                    $.gritter.add({
+                        title: 'Bravo',
+                        text: 'L\'étape de quête n\'existe plus !',
+                        class_name: 'color success'
+                    });
+                    $("#tableItemTr" + actuelId).hide();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $.gritter.add({
+                        title: 'Erreur',
+                        text: 'Erreur: ' + textStatus,
+                        class_name: 'color danger'
+                    });
+                }
+            });
+        }
+
+        $.fn.niftyModal('setDefaults', {
+            overlaySelector: '.modal-overlay',
+            closeSelector: '.modal-close',
+            classAddAfterOpen: 'modal-show',
+            buttons: [
+             {
+                  class: 'btn-ok',
+                  callback: function (btn, modal, event) {
+                      //You can cancel the modal hide event by returning false
+                      deleteItemConfirm();
+                      return true;
+                  }
+              }
+            ]
+        });
+
+        function deleteItem(id) {
+            actuelId = id;
+            $('#md-deleteItem').niftyModal();
+        }
+    </script>
+}

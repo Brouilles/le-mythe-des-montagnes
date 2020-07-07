@@ -1,0 +1,41 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    var charactersList = new Characters[3];
+    using (var context = new SiteDbContext())
+    {
+        var ExeptUsers = new List<string>();
+
+        charactersList = context.Characters
+            .OrderByDescending(r => r.Level)
+            .Select(r => r).Take(3).ToArray();
+    }
+}
+
+<div class="container">
+    <div class="col-md-12" style="text-align: center;">
+        <h2>@Localizer["The highest level players"] ...</h2>
+    </div>
+
+    @{ 
+        for (int i = 0; i < charactersList.Length; i++)
+        {
+            int xpPercent = (charactersList[i].Xp * 100 / (int)Util.GetXpforUp(charactersList[i].Level));
+            <text>
+            <div class="col-md-4 col-sm-6">
+                <div style="text-align: center;">
+                    <img alt="Avatar" src="@("/images/avatars/" + charactersList[i].AvatarId + ".svg")" style="width: 45%;" /><br />
+                    <b>@UserManager.FindByIdAsync(charactersList[i].UserId).Result.UserName - @charactersList[i].Level</b>
+                    <div style="margin: auto; width: 80%; margin-top: 13px;">
+                        <div class="progress">
+                            <div id="JsXp" class="progress-bar progress-bar-success progress-bar-striped active" style="width: @(xpPercent + "%")"><span>@xpPercent</span>%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </text>
+        }   
+    }
+</div>

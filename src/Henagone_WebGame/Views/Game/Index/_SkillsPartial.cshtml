@@ -1,0 +1,45 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using static Henagone_WebGame.Controllers.GameController
+@{ 
+    Characters model;
+    using (var context = new SiteDbContext())
+    {
+        model = context.Characters
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).FirstOrDefault();
+    }
+}
+
+<div class="col-md-4 col-xs-4" style="text-align: center; padding: 0;">
+    <div class="col-md-12">
+        <img onclick="SelectSkill(1)" id="skillSelect1" class="skillButton attack @if(model.FirstSkillId == 1 || model.SecondSkillId == 1 || model.ThirdSkillId == 1) { <text>active</text>}" tabindex="0" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(1, User).Title" data-content="@Util.GetSkillData(1, User).Description" src="~/images/Game/Skills/1.svg" />
+        <img onclick="SelectSkill(2)" id="skillSelect2" class="skillButton attack @if(model.FirstSkillId == 2 || model.SecondSkillId == 2 || model.ThirdSkillId == 2) { <text>active</text>}" tabindex="0" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(2, User).Title" data-content="@Util.GetSkillData(2, User).Description" src="~/images/Game/Skills/2.svg" />
+        <br/>
+        <img onclick="SelectSkill(3)" id="skillSelect3" class="skillButton attack @if(model.FirstSkillId == 3 || model.SecondSkillId == 3 || model.ThirdSkillId == 3) { <text>active</text>}" tabindex="0" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(3, User).Title" data-content="@Util.GetSkillData(3, User).Description" src="~/images/Game/Skills/3.svg" />
+    </div>
+</div>
+
+<div class="col-md-4 col-xs-4" style="text-align: center; padding: 0;">
+    <div class="col-md-12">
+        <img onclick="SelectSkill(4)" id="skillSelect4" class="skillButton defense @if(model.FirstSkillId == 4 || model.SecondSkillId == 4 || model.ThirdSkillId == 4) { <text>active</text>}" tabindex="0" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(4, User).Title" data-content="@Util.GetSkillData(4, User).Description" src="~/images/Game/Skills/4.svg" />
+        <img onclick="SelectSkill(5)" id="skillSelect5" class="skillButton defense @if(model.FirstSkillId == 5 || model.SecondSkillId == 5 || model.ThirdSkillId == 5) { <text>active</text>}" tabindex="0" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(5, User).Title" data-content="@Util.GetSkillData(5, User).Description" src="~/images/Game/Skills/5.svg" />
+        <br/>
+        <img onclick="SelectSkill(6)" id="skillSelect6" class="skillButton defense @if(model.FirstSkillId == 6 || model.SecondSkillId == 6 || model.ThirdSkillId == 6) { <text>active</text>}" tabindex="0" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(6, User).Title" data-content="@Util.GetSkillData(6, User).Description" src="~/images/Game/Skills/6.svg" />
+    </div>
+</div>
+
+<div class="col-md-4 col-xs-4" style="text-align: center; padding: 0;">
+    <div class="col-md-12">
+        <img onclick="SelectSkill(7)" id="skillSelect7" class="skillButton energy @if(model.FirstSkillId == 7 || model.SecondSkillId == 7 || model.ThirdSkillId == 7) { <text>active</text>}" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(7, User).Title" data-content="@Util.GetSkillData(7, User).Description" src="~/images/Game/Skills/7.svg" />
+        <img onclick="SelectSkill(8)" id="skillSelect8" class="skillButton energy @if(model.FirstSkillId == 8 || model.SecondSkillId == 8 || model.ThirdSkillId == 8) { <text>active</text>}" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(8, User).Title" data-content="@Util.GetSkillData(8, User).Description" src="~/images/Game/Skills/8.svg" />
+        <br/>
+        <img onclick="SelectSkill(9)" id="skillSelect9" class="skillButton energy @if(model.FirstSkillId == 9 || model.SecondSkillId == 9 || model.ThirdSkillId == 9) { <text>active</text>}" data-html="true" data-toggle="popover" data-trigger="hover" data-placement="right" title="@Util.GetSkillData(9, User).Title" data-content="@Util.GetSkillData(9, User).Description" src="~/images/Game/Skills/9.svg" />
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+</script>

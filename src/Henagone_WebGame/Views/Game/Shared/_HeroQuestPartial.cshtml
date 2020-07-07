@@ -1,0 +1,86 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@using static Henagone_WebGame.Controllers.GameController
+@model string
+@{
+    HeroQuests quest = null;
+    bool repeat = false;
+    using (var context = new SiteDbContext())
+    {
+        var lastQuests = context.HeroesQuestsState
+            .Where(r => r.QuestId == int.Parse(Model) && r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) && r.State == 0)
+            .Count();
+
+        if (lastQuests == 0)
+        {
+            repeat = false;
+            var currentQuests = context.HeroesQuestsState
+                .Where(r => r.QuestId == int.Parse(Model) && r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) && r.State > 0)
+                .Select(r => r).FirstOrDefault();
+
+            quest = context.HeroQuests
+                .Where(r => r.Id == int.Parse(Model))
+                .Select(r => r).First();
+
+            if (currentQuests == null) {
+                HeroesQuestsState questState = new HeroesQuestsState
+                {
+                    UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    QuestId = (int)quest.Id,
+                    State = 1,
+                    StartTimer = null
+                };
+                context.Add(questState);
+                context.SaveChanges();
+            }
+            else
+            {
+                <text>
+                    <script>
+                        HeroQuestNextStep(@lastQuests);
+                    </script>
+                </text>
+            }
+        }
+        else { repeat = true; }
+    }
+}
+<div class="panel panel-default">
+    @if (repeat == false)
+    {
+        <div class="panel-heading panel-heading-divider">
+            <div class="title">@Util.LanguageSelection(quest.TitleEn, quest.TitleFr)</div>
+        </div>
+        <div class="panel-body">
+            <div id="heroQuestDivCenter">
+                <p>@Util.LanguageSelection(quest.DescriptionEn, quest.DescriptionFr)</p>
+                <button onclick="HeroQuestNextStep(1)" class="btn btn-space btn-primary">@Localizer["Next step"]</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p id="heroQuestDivCenter">@Localizer["You've already done this quest !"]</p>
+    }
+</div>
+
+<script>
+    $(function () {
+        UICenterDiv('#heroQuestDivCenter');
+        window.onresize = function (event) {
+            UICenterDiv('#heroQuestDivCenter');
+        }
+
+        $("#heroQuestDivCenter").find('img').each(function () {
+            var fakeSrc = $(this).attr('src');
+            $("<img/>").attr("src", fakeSrc).css('display', 'none').load(function () {
+                images_loaded++;
+                if (images_loaded >= total_images) {
+                    UICenterDiv('#heroQuestDivCenter');
+                }
+            });
+
+        });
+    });
+</script>

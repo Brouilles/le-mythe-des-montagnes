@@ -1,0 +1,20 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@{ 
+    Characters characters;
+    using (var context = new SiteDbContext())
+    {
+        characters = context.Characters
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).FirstOrDefault();
+    }
+}
+
+@if (characters != null)
+{
+    <dt class="deleteCharacterDiv">@Localizer["Character"] :</dt>
+    <dd class="deleteCharacterDiv">
+       <a href="#" class="text-danger md-trigger" data-modal="md-deleteCharacter">@Localizer["Delete your character"]</a>
+    </dd>
+}
+

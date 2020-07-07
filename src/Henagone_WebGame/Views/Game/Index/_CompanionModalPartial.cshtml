@@ -1,0 +1,80 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using static Henagone_WebGame.Controllers.GameController
+@model string
+@{
+    List<CompanionQuests> QuestsList = new List<CompanionQuests>();
+    using (var context = new SiteDbContext())
+    {
+        string currentQuest = context.Conf
+            .Where(r => r.Id == Int32.Parse(Model) + 3)
+            .Select(r => r.Value).First();
+        var currentQuestArray = currentQuest.Split(',').ToArray();
+
+        foreach (var item in currentQuestArray)
+        {
+            QuestsList.Add(context.CompanionQuests
+                .OrderBy(r => r.Gold)
+                .Where(r => r.Class == Int32.Parse(Model) && r.Id == Int32.Parse(item))
+                .Select(r => r).First());
+        }
+    }
+}
+
+<div id="md-CompanionMission" class="modal-container colored-header colored-header-primary modal-effect-10">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button class="close modal-close" aria-hidden="true" type="button" data-dismiss="modal"><span class="mdi mdi-close"></span></button>
+            <h3 class="modal-title">@Localizer["Choose the mission for your companion"]</h3>
+        </div>
+        <div class="modal-body">
+            <div>
+                <div class="table-responsive">
+                    <table class="table table-striped table-borderless" style="background-color: white; color: #404040;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>@Localizer["Mission"]</th>
+                                <th>@Localizer["Description"]</th>
+                                <th>@Localizer["Success"]</th>
+                                <th style="width:30%;">@Localizer["Reward"]</th>
+                                <th>@Localizer["Time"]</th>
+                            </tr>
+                        </thead>
+                        <tbody class="no-border-x">
+                            @foreach (var item in QuestsList)
+                            {
+                                <tr>
+                                    <td><input name="radCompanionQuest" id="radCompanion1" type="radio" value="@item.Id"></td>
+                                    <td>@Util.LanguageSelection(item.TitleEn, item.TitleFr)</td>
+                                    <td>@Util.LanguageSelection(item.DescriptionEn, item.DescriptionFr)</td>
+                                    <td>@(item.Success + "%")</td>
+                                    <td>
+                                        @Html.Raw(Util.CompanionQuestBonus(item))
+                                            @*
+                                                <button class="btn btn-space btn-success" data-placement="left"
+                                                        data-toggle="popover" data-html="true"
+                                                        data-content='@Html.Raw(Util.CompanionQuestBonus(item))'>
+                                                Voir </button>
+                                            *@
+                                    </td>
+                                    <td>@TimeSpan.FromMinutes(item.Time).ToString(@"hh\:mm") <input id="@("TimeCompanionInput" + @item.Id)" type="hidden" value="@TimeSpan.FromMinutes(item.Time).TotalSeconds" /></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default modal-close" type="button" data-dismiss="modal">@Localizer["Cancel"]</button>
+            <button disabled id="CompanionQuestProceed" onclick="StartCompanionQuest()" class="btn btn-primary modal-close" type="button" data-dismiss="modal">@Localizer["Proceed"]</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+    });
+</script>

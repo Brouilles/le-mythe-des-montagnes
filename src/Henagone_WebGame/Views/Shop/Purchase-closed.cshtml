@@ -1,0 +1,168 @@
+﻿@using Henagone_WebGame.Models.ShopViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@{
+    ViewData["Title"] = "Purchase";
+}
+
+
+<aside class="page-aside">
+    <div class="be-scroller ps-container ps-theme-default" data-ps-id="babffe50-d879-0cc3-cc15-d418477603f3">
+        <div class="aside-content">
+            <div class="content">
+                <div class="aside-header">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".aside-nav"><span class="icon mdi mdi-caret-down"></span></button><span class="title">@Localizer["Get more artifacts"]</span>
+                    <p class="description">@Localizer["Choose your payment method"]</p>
+                </div>
+            </div>
+            <div class="aside-nav collapse">
+                <ul class="nav">
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<div class="tab-div main-content container-fluid" style="display: block;">
+    <div class="email-head">
+        <div class="email-head-subject">
+            <div class="title">
+                <span>Indisponible pendant la bêta privée</span>
+            </div>
+        </div>
+    </div>
+    <div class="email-body" style="text-align: center;">
+        Cette page est actuellement indisponible.
+    </div>
+</div>
+
+@section StyleSheet {
+    <link rel="stylesheet" type="text/css" href="~/lib/select2/css/select2.min.css" />
+}
+
+@section Scripts {
+    <script type="text/javascript" src="~/lib/jquery-ajax-unobtrusive/jquery.unobtrusive-ajax.min.js"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script> 
+    <script type="text/javascript" src="~/lib/card-master/dist/jquery.card.js"></script>
+    <script src="~/lib/select2/js/select2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="~/lib/jquery.maskedinput/jquery.maskedinput.min.js"></script>
+    <script type="text/javascript" src="~/js/app-form-masks.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //Mask
+            App.masks();
+            $('.giftCode').mask('********-****-****-****-************', { placeholder: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" });
+
+            //Select2 tags
+            $(".select2").select2({
+                width: '100%'
+            });
+            $(".tags").select2({ tags: true, width: '100%' });
+        });
+
+        $('.be-wrapper').addClass("be-aside");
+        $('#PageContent').removeClass("main-content container-fluid");
+        function resetTab() 
+        {
+            $('.tab-div').hide();
+            $('.tab-header').parent().removeClass("active");
+        }
+
+        // Tab
+        $('#mobilePhoneBtn').click(function () {
+            resetTab();
+            $('#mobilePhoneBtn').parent().addClass("active");
+            $('#mobilePhoneDiv').show();
+        });
+
+        $('#paypalBtn').click(function () {
+            resetTab();
+            $('#paypalBtn').parent().addClass("active");
+            $('#paypalDiv').show();
+        });
+
+        $('#stripeBtn').click(function () {
+            resetTab();
+            $('#stripeBtn').parent().addClass("active");
+            $('#stripeDiv').show();
+        });
+
+        $('#giftBtn').click(function () {
+            resetTab();
+            $('#giftBtn').parent().addClass("active");
+            $('#giftDiv').show();
+        });
+
+        // Stripe 
+        Stripe.setPublishableKey('pk_test_kYtEGZBX7z0FCvxxYc6Ndos3');
+        $('#StripeForm').card({
+            container: '.card-wrapper',
+        });
+
+        var $form = $('#StripeForm');
+        $form.submit(function (e) {
+            e.preventDefault();
+            $form.find('button').prop('disabled', true);
+
+            //Stripe code
+            var arrayDate = $('#expiry').val().split("/")
+            Stripe.card.createToken({
+                number: $('#number').val(),
+                cvc: $('#cvc').val(),
+                exp_month: arrayDate[0].replace(/\s/g, ''),
+                exp_year: arrayDate[1].replace(/\s/g, '')
+            }, function (status, response) {
+                if (response.error) { // Error
+                    $("#stripeDivResult").removeClass();
+                    $("#stripeDivResult").addClass("alert alert-danger");
+
+                    $("#stripeDivResult").text(response.error.message);
+                    $form.find('button').prop('disabled', false);
+                } else { //Success
+                    var token = response.id;
+
+                    $('#Token').val(token);
+                    $form.get(0).submit();
+                }
+            });
+        });
+
+        // Gift
+        function RedeemGift() {
+            var code = $(".giftCode").val().replace(/-/g, '');
+
+            $.ajax({
+                data: { id: code },
+                url: '/Shop/AjaxRedeemGift',
+                success: function (data) {
+                    $.each(data, function (key, val) {
+                        if (val.Success == "true") {
+                            $("#giftDivResult").removeClass();
+                            $("#giftDivResult").addClass("alert alert-success");
+                            $('#giftDivArray').show();
+                            $('#giftDivArrayBody').empty();
+                            $(".giftCode").empty();
+
+                            $("#giftDivResult").html('<strong>' + val.Title + '</strong> ' + val.Msg);
+                        }
+                        else if (val.Success == "false") {
+                            $("#giftDivResult").removeClass();
+                            $("#giftDivResult").addClass('alert alert-danger');
+                            $("#giftDivResult").html('<strong>' + val.Title + '</strong> ' + val.Msg);
+                        }
+                        else { // Draw gift definition
+                            $('#giftDivArrayBody').append('<tr><td class="user-avatar"> <img alt="Avatar" src="' + val.Img + '"> ' + val.Title + '</td><td>' + val.Text + '</td></tr>');
+                        }
+                    });
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#giftDivResult").removeClass();
+                    $("#giftDivResult").addClass('alert alert-danger');
+                    $("#giftDivResult").html('Internal Error: ' + errorThrown);
+                }
+            });
+        }
+    </script>
+}

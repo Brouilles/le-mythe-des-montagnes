@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Artifacts" xml:space="preserve">
+    <value>Artefacts</value>
+  </data>
+  <data name="Character Creation" xml:space="preserve">
+    <value>Création de personnage</value>
+  </data>
+  <data name="Choose your character :" xml:space="preserve">
+    <value>Choisissez votre personnage :</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Achevée</value>
+  </data>
+  <data name="Defense" xml:space="preserve">
+    <value>Défense</value>
+  </data>
+  <data name="Energy" xml:space="preserve">
+    <value>Energie</value>
+  </data>
+  <data name="Finish" xml:space="preserve">
+    <value>Terminer</value>
+  </data>
+  <data name="Gold" xml:space="preserve">
+    <value>Or</value>
+  </data>
+  <data name="Level" xml:space="preserve">
+    <value>Niveau</value>
+  </data>
+  <data name="Life" xml:space="preserve">
+    <value>Vie</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="Next Step" xml:space="preserve">
+    <value>Étape suivante</value>
+  </data>
+  <data name="Prev" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="Stamina" xml:space="preserve">
+    <value>Endurance</value>
+  </data>
+  <data name="Step 1" xml:space="preserve">
+    <value>Étape 1</value>
+  </data>
+  <data name="Step 2" xml:space="preserve">
+    <value>Étape 2</value>
+  </data>
+  <data name="Strength" xml:space="preserve">
+    <value>Force</value>
+  </data>
+  <data name="There are decades of it, a global and massive uprising of the human race, where each human was a slave, burst. A part of the population flees a kingdom managed by a race autocrats, the giants. Hostile to any other reign of species different from theirs. Groups of men turned to the east mountainous borders. Its mountains were a natural defense, the chaotic and narrow reliefs are perfect against the disproportionate sizes of the giants. The men sheltered there easier, beginning to base(establish) the bases of people, a primitive hope." xml:space="preserve">
+    <value>Il y a des décennies de cela, un soulèvement global et massif de l’espèce humaine, refluer à un statut d’esclaves, éclata. Une partie de la population fuit un royaume dirigé par une race des plus autocrates, les géants. Hostile à tout autre règne d’espèce différente de la leur. Des groupes d’Hommes s’orientèrent vers les frontières montagneuses de l’est. Ses montagnes étaient une défense naturelle, les reliefs chaotiques et étriqués furent parfaits contre leurs tailles démesurées. Les Hommes s'y abritèrent avec aisance, commençant à fonder les bases d’un peuple, d’un espoir primitif.</value>
+  </data>
+  <data name="Welcome player !" xml:space="preserve">
+    <value>Bienvenue joueur !</value>
+  </data>
+  <data name="You settle down with the other migrants of your group in bottoms-districts, in shanties which were in dereliction. You renovating his ruins to you create a housing environment and be able to prosper. On the main place of Horaum, you find the means to make you some money and so to begin your new life." xml:space="preserve">
+    <value>Vous vous installez avec les autres migrants de votre groupe dans les bas-quartiers, dans des masures qui étaient à l’abandon, rénovant ses ruines afin de vous crée un habitat ou pouvoir prospérer. Sur la place principale de Horaum, vous trouvez le moyen de vous faire quelque pièce et ainsi débuter votre nouvelle vie.</value>
+  </data>
+  <data name="You were able to run away from numerous years later with your clan. On the way of your exodus a multitude of your friends, your brothers and your sisters die as well as from unknowns. At we are arrived in mountains the number of survivor had been to divide by three, the bodies of the individuals fell constantly under the fatigue. You were saved thanks to the discovery of the city of Horaum. You understand that this city was not the only one to have been set up since the first exiles settled down in the region. Its cities it was united under the same banner to take advantage of arable land of rivers protected by the mountain range, and in time establish a kingdom where man is finally free." xml:space="preserve">
+    <value>Vous avez pu fuir de nombreuses années plus tard avec votre clan natal. Sur le chemin de votre exode une multitude de vos amis, frère et sœur meurent ainsi que d'innombrables inconnus. Arriver dans les montagnes le nombre de survivant avait été diviser par trois, les corps des individus tombaient continuellement sous la fatigue. Vous avez été épargné grâce à la découverte de la ville d’Horaum. Vous comprenez que cette ville ne fut pas la seule à avoir été érigé depuis que les premiers exilés s’installèrent dans la région. Ses citées c’était uni sous une même bannière afin de profiter des terres arables des fleuves protégés par la chaine de montagne et avec le temps fondez un royaume où Homme est finalement libre.</value>
+  </data>
+</root>

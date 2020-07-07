@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+@{
+    Layout = null;
+    ViewData["Title"] = @Localizer["Maintenance"];
+}
+
+
+<!DOCTYPE html>
+<html lang="@Util.LanguageSelection("en", "fr")">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Le mythe des montagnes</title>
+</head>
+<body style="background-color: #656379; color: white; font-family: Verdana,sans-serif;">
+    <div id="page" style="text-align: center; margin-top: 10%;">
+        <img src="~/images/logo-symbol-xl.png" alt="Le mythe des montagnes" />
+        <h1>Le mythe des montagnes</h1>
+        <p>@Localizer["We're working hard to improve the website and we'll be ready to launch coming soon."]</p>
+    </div>
+</body>
+</html>
+

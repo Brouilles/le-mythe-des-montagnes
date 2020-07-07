@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="&lt;strong&gt;Apothecary :&lt;/strong&gt; a small wound? You are in the right place! You will find here potion to increase your skills temporarily or even a potion for forget your skills attribute. After hard fights on the front you can be treated, for a fee, to be in good shape!" xml:space="preserve">
+    <value>&lt;strong&gt;Apothicaire :&lt;/strong&gt; un petit bobo ? Envie d’un remontant naturel ? Vous êtes au bon endroit ! Vous trouverez ici potion pour augmenter vos compétences de façon temporaire ou même une potion d’oubli pour réattribuer vos points de compétences. Après de rudes combats sur le front vous pourrez être soigné, moyennant finance, pour être en pleine forme !</value>
+  </data>
+  <data name="&lt;strong&gt;Jobs :&lt;/strong&gt; living adventures is good, but it must be funded! Fortunately for you the bulletin board of the city offers a palette of works adapted to your needs. Do not hesitate to make your visit!" xml:space="preserve">
+    <value>&lt;strong&gt;Emplois :&lt;/strong&gt; vivre des aventures c’est bien, mais il faut les financer ! Heureusement pour vous le tableau d’affichage de la ville propose une palette de travaux adaptés à vos besoins. N’hésitez pas à y faire un tour afin de remplir votre bourse !</value>
+  </data>
+  <data name="&lt;strong&gt;Manor :&lt;/strong&gt; your humble abode, you can start from this one re-examine your past adventures or you prepare for news. Narrative quests, where you can make the choice and live a unique adventure, are available in this space." xml:space="preserve">
+    <value>&lt;strong&gt;Manoir :&lt;/strong&gt; votre humble demeure, vous pourrez depuis celle-ci ressasser vos aventures passées ou alors vous préparez pour les vivres. Les quêtes narratives, où vous pourrez faire des choix et vivre une aventure unique, seront disponibles dans cet espace.</value>
+  </data>
+  <data name="&lt;strong&gt;Shop :&lt;/strong&gt; spend your money earned to equip you for your next adventures. Be careful, your bag is not stretchable! You will have to make the right choices! In addition, good news, the artifacts are accepted to be converted to gold! And if you do not know what to do with bulky items, you can sell them at the best price." xml:space="preserve">
+    <value>&lt;strong&gt;Boutique :&lt;/strong&gt; faite vos emplettes et dépensé votre or durement gagné pour vous équiper pour vos prochaines aventures. Cependant faite attention, votre sac n’est pas extensible ! Il vous faudra donc faire les bons choix ! De plus, bonne nouvelle, les artefacts sont acceptés est pourrons même être converti en or ! Et si vous ne savez que faire de vos objets encombrants, vous pourrez les vendre au meilleur prix.</value>
+  </data>
+  <data name="&lt;strong&gt;Skills :&lt;/strong&gt; below your sheet of character, you will find various icons corresponding to a skill. The red represents attacks, blue the defense and the yellow the energy. You are entitled until 3 skills maximum which you can use in fight." xml:space="preserve">
+    <value>&lt;strong&gt;Compétences :&lt;/strong&gt; en dessous de votre feuille de personnage, vous trouverez différentes icônes correspondant à une compétence. Le rouge représente les attaques, le bleu la défense et le jaune l’énergie. Vous avez droit jusqu’à 3 compétences maximum que vous pourrez utiliser en combat par la suite.</value>
+  </data>
+  <data name="&lt;strong&gt;The Tavern :&lt;/strong&gt; besides being able to relax quietly with a beer in the hand the tavern allows you to access the quests of heroes who will allow you to discover the universe where your character evolves through rhythmic stories. The tavern also allows you to meet with companions, ready to offer their services for a fee." xml:space="preserve">
+    <value>&lt;strong&gt;La Taverne :&lt;/strong&gt; en dehors de pouvoir vous détendre tranquillement avec une bière à la main la taverne vous permet d’accéder aux quêtes de héros qui vous permettront de découvrir l’univers ou votre personnage évolue à travers des histoires rythmées. La taverne vous permet aussi de faire des rencontres avec des compagnons, prêt à vous offrir leurs services contre rémunération.</value>
+  </data>
+  <data name="Apothecary" xml:space="preserve">
+    <value>Apothicaire</value>
+  </data>
+  <data name="Are you sure you want to close the window ?" xml:space="preserve">
+    <value>Voulez-vous vraiment fermer la fenêtre ?</value>
+  </data>
+  <data name="Are you sure you want to reset your character statistics?" xml:space="preserve">
+    <value>Voulez-vous vraiment réinitialiser vos statistiques de personnage ?</value>
+  </data>
+  <data name="Arena" xml:space="preserve">
+    <value>Arène</value>
+  </data>
+  <data name="Arena (Coming soon)" xml:space="preserve">
+    <value>Arène (Prochainement)</value>
+  </data>
+  <data name="Artifacts" xml:space="preserve">
+    <value>Artefacts</value>
+  </data>
+  <data name="Bric-a-brac" xml:space="preserve">
+    <value>Bric-à-brac</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Care" xml:space="preserve">
+    <value>Soin</value>
+  </data>
+  <data name="Companion" xml:space="preserve">
+    <value>Compagnon</value>
+  </data>
+  <data name="Defense" xml:space="preserve">
+    <value>Défense</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Energy" xml:space="preserve">
+    <value>Energie</value>
+  </data>
+  <data name="Equipment" xml:space="preserve">
+    <value>Équipement</value>
+  </data>
+  <data name="Game" xml:space="preserve">
+    <value>Jeu</value>
+  </data>
+  <data name="Gold" xml:space="preserve">
+    <value>Or</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Aide</value>
+  </data>
+  <data name="Hunting table" xml:space="preserve">
+    <value>Tableau de chasse</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Inventaire</value>
+  </data>
+  <data name="Job" xml:space="preserve">
+    <value>Emploi</value>
+  </data>
+  <data name="Jobs" xml:space="preserve">
+    <value>Emplois</value>
+  </data>
+  <data name="Level" xml:space="preserve">
+    <value>Niveau</value>
+  </data>
+  <data name="Life" xml:space="preserve">
+    <value>Vie</value>
+  </data>
+  <data name="Lost" xml:space="preserve">
+    <value>Défaite</value>
+  </data>
+  <data name="Management" xml:space="preserve">
+    <value>Gestion</value>
+  </data>
+  <data name="Manor" xml:space="preserve">
+    <value>Manoir</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Once closed, if a quest or battle and current data can be lost." xml:space="preserve">
+    <value>Une fois fermé, si une quête ou un combat et en cours les données peuvent être perdu.</value>
+  </data>
+  <data name="Pay" xml:space="preserve">
+    <value>Salaire</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Prix</value>
+  </data>
+  <data name="Proceed" xml:space="preserve">
+    <value>Procéder</value>
+  </data>
+  <data name="Purchase" xml:space="preserve">
+    <value>Acheter</value>
+  </data>
+  <data name="Ranking" xml:space="preserve">
+    <value>Classement</value>
+  </data>
+  <data name="Reset your skill points ({0} artifacts)" xml:space="preserve">
+    <value>Réinitialiser vos points de compétences ({0} artefacts)</value>
+  </data>
+  <data name="Shop" xml:space="preserve">
+    <value>Boutique</value>
+  </data>
+  <data name="Still a little patience, soon available!" xml:space="preserve">
+    <value>Encore un peu de patience, bientôt disponible !</value>
+  </data>
+  <data name="Strength" xml:space="preserve">
+    <value>Force</value>
+  </data>
+  <data name="Tavern" xml:space="preserve">
+    <value>Taverne</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Temps</value>
+  </data>
+  <data name="Unequip" xml:space="preserve">
+    <value>Déséquiper</value>
+  </data>
+  <data name="Weight" xml:space="preserve">
+    <value>Poids</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Bienvenue</value>
+  </data>
+  <data name="Welcome to the apothecary ! What do you want ?" xml:space="preserve">
+    <value>Bienvenue à l'apothicaire ! Qu'est-ce que tu veux ?</value>
+  </data>
+  <data name="Welcome to you, new player! Our team is happy to invite you to join the community. &lt;strong&gt;The city center of your interface allows you to access the most important functionality of the city.&lt;/strong&gt;" xml:space="preserve">
+    <value>Bienvenue à vous nouveau joueur ! Notre équipe est heureuse de vous accueil parmi nous, n’hésitez pas à venir sur le &lt;a href="https://discord.gg/5JNmvMf"   target="_blank"&gt;tchat Discord pour rejoindre la communauté&lt;/a&gt;. &lt;strong&gt;La ville au centre de votre interface vous permet d’accéder à la plupart des bâtiments disponibles pour un accès à une multitude de fonctionnalité, cliquer sur celui qui vous intéresse pour rentrer dedans !&lt;/strong&gt;</value>
+  </data>
+  <data name="What job do you want to do?" xml:space="preserve">
+    <value>Quel travail voulez-vous faire?</value>
+  </data>
+  <data name="Win" xml:space="preserve">
+    <value>Victoire</value>
+  </data>
+  <data name="You do not lose your items or your gold. You will need to reassign your character's skill points." xml:space="preserve">
+    <value>Vous ne perdez pas vos objets ni votre or. Vous devrez réattribuer les points de compétences de votre personnage.</value>
+  </data>
+  <data name="You have skill points to assign" xml:space="preserve">
+    <value>Vous avez des points de compétence à assigner</value>
+  </data>
+</root>

@@ -1,0 +1,35 @@
+﻿@model Henagone_WebGame.Models.AdminViewModels.Conf
+@{
+    ViewData["Title"] = "Maintenance";
+}
+
+<div class="splash-container">
+    <div class="panel panel-default panel-border-color panel-border-color-primary">
+        <div class="panel-heading"><img height="27" class="logo-img" alt="logo" src="~/images/logo-xx.png"><span class="splash-description">Système de maintenance du site.</span></div>
+        <div id="adminDiv" class="panel-body">
+            <form asp-action="Maintenance" method="post">
+                <div asp-validation-summary="All" data-valmsg-summary="true" class="alert alert-danger">
+                    <ul>
+                        <li style="display: none;"></li>
+                    </ul>
+                </div>
+
+                <input asp-for="Id" type="hidden">
+                <input asp-for="Name" type="hidden">
+
+                <div class="form-group">
+                    <label>État du site (actuellement: @if(Model.Value == "0") { <text>Site en ligne</text> } else if (Model.Value == "1") { <text>Maintenance</text> } else { <text>Indisponible</text> })</label>
+                    <select asp-for="Value" class="form-control">
+                        <option value="0">Site en ligne</option>
+                        <option value="1">Maintenance</option>
+                        <option value="2">Indisponible</option>
+                    </select>
+                </div>
+
+                <div class="form-group login-submit">
+                    <button class="btn btn-primary btn-xl" type="submit" data-dismiss="modal">Modifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

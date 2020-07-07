@@ -1,0 +1,56 @@
+﻿@using Henagone_WebGame.Models.ShopViewModels
+@{ 
+    List<Gifts> GiftList;
+    using (var context = new SiteDbContext())
+    {
+        GiftList = context.Gifts
+            .OrderByDescending(r => r.Id)
+            .Select(r => r).ToList();
+    }
+}
+
+<div class="col-md-6">
+    <div class="panel panel-default panel-border-color panel-border-color-primary">
+        <div class="panel-heading panel-heading-divider">Liste des codes cadeaux</div>
+        <div class="panel-body table-responsive">
+            <table class="table table-striped table-borderless">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Début de validité</th>
+                        <th>Fin de validité</th>
+                        <th class="number">Artefacts</th>
+                        <th class="number">XP</th>
+                        <th class="number">Booster</th>
+                        <th>État</th>
+                        <th class="actions"></th>
+                    </tr>
+                </thead>
+                <tbody class="no-border-x">
+                    @foreach (var gift in GiftList)
+                    {
+                        <tr id="@("tableGiftTr" + gift.Id)">
+                            <td>@gift.Code</td>
+                            <td>@gift.Start</td>
+                            <td>@gift.End</td>
+                            <td class="number">@gift.Artifacts</td>
+                            <td class="number">@gift.Experiences</td>
+                            <td class="number">#</td>
+                            <td class="text-center">
+                            @if (gift.Active == true) {
+                               <text> <span class="label label-success">Valide</span> </text>
+                            }
+                            else {
+                                <text> <span class="label label-danger">Non Valide</span> </text>
+                            }
+                            </td>
+                            <td class="actions">
+                                <a href="#" onclick="deleteGift(@gift.Id)" data-placement="top" data-toggle="tooltip" title="Supprimer"><span class="icon mdi mdi-delete"></span></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

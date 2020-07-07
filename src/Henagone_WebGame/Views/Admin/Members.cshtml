@@ -1,0 +1,217 @@
+﻿@using Henagone_WebGame.Models.AdminViewModels
+@model IList<ApplicationUser>
+@{
+    ViewData["Title"] = "Gestion des membres";
+}
+
+<div class="row">
+    <!-- Header -->
+    <div class="col-xs-12 col-md-6 col-lg-3">
+        <div class="widget widget-tile">
+            <div class="data-info">
+                <div class="desc">7 derniers jours</div>
+                <div class="value">
+                    <span class="indicator indicator-equal mdi mdi-chevron-right"></span><span class="number" data-toggle="counter" data-end="@ViewData["TotalLastDays"]">@ViewData["TotalLastDays"]</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-md-6 col-lg-3">
+        <div class="widget widget-tile">
+            <div class="data-info">
+                <div class="desc">Ce mois-ci</div>
+                <div class="value">
+                    <span class="indicator @ViewData["totalRegisterThisMonthChevron"]"></span><span class="number" data-toggle="counter" data-end="@ViewData["totalRegisterThisMonth"]">@ViewData["totalRegisterThisMonth"]</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-md-6 col-lg-3">
+        <div class="widget widget-tile">
+            <div class="data-info">
+                <div class="desc">Mois dernier</div>
+                <div class="value">
+                    <span class="indicator indicator-equal mdi mdi-chevron-right"></span><span class="number" data-toggle="counter" data-end="@ViewData["totalRegisterLastMonth"]">@ViewData["totalRegisterLastMonth"]</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-md-6 col-lg-3">
+        <div class="widget widget-tile">
+            <div class="chart sparkline" id="spark4"><canvas width="85" height="35" style="width: 85px; height: 35px; vertical-align: top; display: inline-block;"></canvas></div>
+            <div class="data-info">
+                <div class="desc">Total</div>
+                <div class="value">
+                    <span class="indicator indicator-equal mdi mdi-chevron-right"></span><span class="number" data-toggle="counter" data-end="@ViewData["Total"]">@ViewData["Total"]</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="col-md-8">
+        <div class="panel panel-default panel-table">
+            <div class="panel-heading panel-heading-divider">
+                Membres
+            </div>
+            <div class="panel-body">
+                <table id="table1" class="table table-striped table-hover table-fw-widget">
+                    <thead>
+                        <tr>
+                            <th>Nom de compte</th>
+                            <th>Adresse Email</th>
+                            <th>Date d'inscription</th>
+                            <th>Dernière connexion</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="odd gradeX">
+                                <td>@item.UserName</td>
+                                <td>@item.Email</td>
+                                <td>@item.Register</td>
+                                @{  
+                                    DateTime lastLogin;
+                                    using (var context = new SiteDbContext())
+                                    {
+                                        lastLogin = context.Connections_statistics
+                                            .OrderByDescending(r => r.Date)
+                                            .Where(r => r.UserId == item.Id)
+                                            .Select(r => r.Date).FirstOrDefault();
+                                    }
+                                }
+                                <td>@lastLogin</td>
+                                <td class="actions">
+                                    <a style="cursor: pointer;" onclick="deleteAccount('@item.Id')" data-placement="top" data-toggle="tooltip" title="Supprimer"><span class="icon mdi mdi-delete"></span></a>
+                                </td>
+                                <td class="actions">
+                                    <a href="#" data-placement="top" data-toggle="tooltip" title="Bannir"><span class="icon mdi mdi-mood-bad"></span></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading panel-heading-divider">Liste des bannis</div>
+                <div class="panel-body">
+                    <div class="alert alert-primary alert-dismissible" role="alert">
+                        <button class="close" aria-label="Close" type="button" data-dismiss="alert"><span class="mdi mdi-close" aria-hidden="true"></span></button><span class="icon mdi mdi-info-outline"></span><strong>Information !</strong> Le système de ban n'est pas encore opérationnel
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Stylesheet {
+    <link rel="stylesheet" type="text/css" href="~/lib/datatables/css/dataTables.bootstrap.min.css" />
+}
+
+@section Modals {
+    <div id="modal-list"></div>
+    <div class="modal-overlay"></div>
+}
+
+@section Scripts {
+    <script src="~/lib/jquery.niftymodals/dist/jquery.niftymodals.min.js" type="text/javascript" asp-append-version="true"></script>
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap.min.js" type="text/javascript"></script>
+    <script src="~/lib/datatables/plugins/buttons/js/dataTables.buttons.js" type="text/javascript"></script>
+    <script src="~/lib/datatables/plugins/buttons/js/buttons.html5.js" type="text/javascript"></script>
+    <script src="~/lib/datatables/plugins/buttons/js/buttons.flash.js" type="text/javascript"></script>
+    <script src="~/lib/datatables/plugins/buttons/js/buttons.print.js" type="text/javascript"></script>
+    <script src="~/lib/datatables/plugins/buttons/js/buttons.colVis.js" type="text/javascript"></script>
+    <script src="~/lib/datatables/plugins/buttons/js/buttons.bootstrap.js" type="text/javascript"></script>
+
+    <script src="~/lib/jquery-flot/jquery.flot.js" type="text/javascript"></script>
+    <script src="~/lib/jquery-flot/jquery.flot.pie.js" type="text/javascript"></script>
+    <script src="~/lib/jquery-flot/jquery.flot.resize.js" type="text/javascript"></script>
+    <script src="~/lib/jquery-flot/plugins/jquery.flot.orderBars.js" type="text/javascript"></script>
+    <script src="~/lib/jquery-flot/plugins/curvedLines.js" type="text/javascript"></script>
+    <script src="~/lib/jquery.sparkline/jquery.sparkline.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        function LoadArea(partialName, divName, append, callFunction, parameter) {
+            $(divName).empty();
+            var request = '/Admin/GetModule?partialName=' + partialName;
+            if (parameter != null) {
+                request += '&param1=' + parameter;
+            }
+            if (append == false || append == null) {
+                $(divName).load(request, function () {
+                    if (callFunction != null) {
+                        callFunction();
+                    }
+                });
+            }
+            else {
+                $.get(request, function (data) {
+                    $(divName).after(data); if (callFunction != null) {
+                        callFunction();
+                    }
+                });
+            }
+        }
+
+        function deleteAccount(userId) {
+            $('#md-deleteAccount').remove();
+            LoadArea('Members/_DeleteModalPartial.cshtml', '#modal-list', true, function () {
+                $('#md-deleteAccount').niftyModal();
+            },
+            userId);
+        }
+
+        $(document).ready(function () {
+              $.fn.niftyModal('setDefaults', {
+                overlaySelector: '.modal-overlay',
+                closeSelector: '.modal-close',
+                classAddAfterOpen: 'modal-show'
+              });
+
+              //Data Table
+              $.extend(true, $.fn.dataTable.defaults, {
+                  dom:
+                    "<'row be-datatable-header'<'col-sm-6'l><'col-sm-6'f>>" +
+                    "<'row be-datatable-body'<'col-sm-12'tr>>" +
+                    "<'row be-datatable-footer'<'col-sm-5'i><'col-sm-7'p>>"
+              });
+
+              $("#table1").dataTable({
+                  columnDefs: [
+                    { orderable: false, targets: -1 },
+                    { orderable: false, targets: -2 }
+                  ]
+              });
+
+              // Chart
+              var color1 = App.color.success;
+              var color2 = App.color.warning;
+              var color3 = App.color.primary;
+
+              $('#spark4').sparkline([@ViewData["TotalArray"]], {
+                  width: '85',
+                  height: '35',
+                  lineColor: color3,
+                  highlightSpotColor: color3,
+                  highlightLineColor: color3,
+                  fillColor: false,
+                  spotColor: false,
+                  minSpotColor: false,
+                  maxSpotColor: false,
+                  lineWidth: 1.15
+              });
+          });
+    </script>
+}

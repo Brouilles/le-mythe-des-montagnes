@@ -1,0 +1,270 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using static Henagone_WebGame.Controllers.GameController
+@{ 
+    // Heroe Quests
+    HeroQuests CurrentQuest = null;
+
+    // Companions
+    Companions[] WarriorArray;
+    Companions[] SentinelArray;
+    Companions[] MessengerArray;
+    Companions[] HealerArray;
+    Companions[] ThiefArray;
+    Companions[] WeaponMasterArray;
+
+    // Database
+    using (var context = new SiteDbContext())
+    {
+        // Companions
+        WarriorArray = context.Companions
+            .OrderByDescending(r => r.Scarcity)
+            .Where(r => r.Class == 0 && r.Purchase > 0)
+            .Select(r => r).ToArray();
+
+        SentinelArray = context.Companions
+            .OrderByDescending(r => r.Scarcity)
+            .Where(r => r.Class == 1 && r.Purchase > 0)
+            .Select(r => r).ToArray();
+
+        MessengerArray = context.Companions
+            .OrderByDescending(r => r.Scarcity)
+            .Where(r => r.Class == 2 && r.Purchase > 0)
+            .Select(r => r).ToArray();
+
+        HealerArray = context.Companions
+            .OrderByDescending(r => r.Scarcity)
+            .Where(r => r.Class == 4 && r.Purchase > 0)
+            .Select(r => r).ToArray();
+
+        ThiefArray = context.Companions
+            .OrderByDescending(r => r.Scarcity)
+            .Where(r => r.Class == 5 && r.Purchase > 0)
+            .Select(r => r).ToArray();
+
+        WeaponMasterArray = context.Companions
+            .OrderByDescending(r => r.Scarcity)
+            .Where(r => r.Class == 6 && r.Purchase > 0)
+            .Select(r => r).ToArray();
+
+        // Heroe Quests
+        int? lastQuest = context.HeroesQuestsState
+            .OrderByDescending(r => r.Id)
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier) && r.State == 0)
+            .Select(r => r.QuestId).FirstOrDefault();
+
+        if (lastQuest == null) {
+            lastQuest = 0;
+        }
+
+        CurrentQuest = context.HeroQuests
+           .Where(r => r.Id == lastQuest + 1)
+           .Select(r => r).FirstOrDefault();
+    }
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading panel-heading-divider">
+        <div class="tools"><span onclick="CloseArea()" class="icon mdi mdi-close"></span></div>
+        <div class="title">@Localizer["Tavern"]</div>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-3">
+            @if(CurrentQuest != null) { 
+                <div id="accordion1" class="panel-group accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion1" href="#collapseOne"><i class="icon mdi mdi-chevron-down"></i> @Util.LanguageSelection(CurrentQuest.TitleEn, CurrentQuest.TitleFr)</a></h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in">
+                            <div class="panel-body">@Util.LanguageSelection(CurrentQuest.SmallDescriptionEn, CurrentQuest.SmallDescriptionFr)</div>
+                            <div style="text-align: right;">
+                                <button onclick="StartHeroQuest(@CurrentQuest.Id)" class="btn btn-space btn-primary">@Localizer["Start the quest"]</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p>@Localizer["No quest is available, come back in a moment."]</p>
+            }
+        </div>
+        <div class="col-md-9">
+            <div class="tab-container">
+                <ul class="nav nav-tabs nav-tabs-responsive">
+                    <li class="active"><a href="#warrior" data-toggle="tab"><span class="text">@Localizer["The warrior"]</span></a></li>
+                    <li class="next"><a href="#sentinel" data-toggle="tab"><span class="text">@Localizer["The sentinel"]</span></a></li>
+                    <li><a href="#messenger" data-toggle="tab"><span class="text">@Localizer["The messenger"]</span></a></li>
+                    <li><a href="#healer" data-toggle="tab"><span class="text">@Localizer["The healer"]</span></a></li>
+                    <li><a href="#thief" data-toggle="tab"><span class="text">@Localizer["Thief"]</span></a></li>
+                    <li><a href="#weaponMaster" data-toggle="tab"><span class="text">@Localizer["The weapon master"]</span></a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="warrior" class="tab-pane active cont">
+                        <div  class="owl-carousel">
+                            @for (int i = 0; i < WarriorArray.Length; i += 2)
+                            {
+                                <div>
+                                    <div>
+                                        <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(WarriorArray[i].Id + Util.LanguageSelection(".en", ".fr") + ".svg")")" />
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseCompanion(@WarriorArray[i].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@WarriorArray[i].Purchase @Localizer["Gold"])</button>
+                                        </div>
+                                    </div>
+
+                                    @if (i + 1 < WarriorArray.Length)
+                                    {
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(WarriorArray[i + 1].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                            <div style="width: 100%; text-align: center;">
+                                                <button onclick="PurchaseCompanion(@WarriorArray[i + 1].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@WarriorArray[i + 1].Purchase @Localizer["Gold"])</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div id="sentinel" class="tab-pane cont">
+                        <div  class="owl-carousel">
+                            @for (int i = 0; i < SentinelArray.Length; i += 2)
+                            {
+                                <div>
+                                    <div>
+                                        <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(SentinelArray[i].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseCompanion(@SentinelArray[i].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@SentinelArray[i].Purchase @Localizer["Gold"])</button>
+                                        </div>
+                                    </div>
+
+                                    @if (i + 1 < SentinelArray.Length)
+                                    {
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(SentinelArray[i + 1].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                            <div style="width: 100%; text-align: center;">
+                                                <button onclick="PurchaseCompanion(@SentinelArray[i + 1].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@SentinelArray[i + 1].Purchase @Localizer["Gold"])</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div id="messenger" class="tab-pane cont">
+                        <div  class="owl-carousel">
+                            @for (int i = 0; i < MessengerArray.Length; i += 2)
+                            {
+                                <div>
+                                    <div>
+                                        <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(MessengerArray[i].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseCompanion(@MessengerArray[i].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@MessengerArray[i].Purchase @Localizer["Gold"])</button>
+                                        </div>
+                                    </div>
+
+                                    @if (i + 1 < MessengerArray.Length)
+                                    {
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(MessengerArray[i + 1].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                            <div style="width: 100%; text-align: center;">
+                                                <button onclick="PurchaseCompanion(@MessengerArray[i + 1].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@MessengerArray[i + 1].Purchase @Localizer["Gold"])</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div id="healer" class="tab-pane cont">
+                        <div  class="owl-carousel">
+                            @for (int i = 0; i < HealerArray.Length; i += 2)
+                            {
+                                <div>
+                                    <div>
+                                        <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(HealerArray[i].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseCompanion(@HealerArray[i].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@HealerArray[i].Purchase @Localizer["Gold"])</button>
+                                        </div>
+                                    </div>
+
+                                    @if (i + 1 < HealerArray.Length)
+                                    {
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(HealerArray[i + 1].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                            <div style="width: 100%; text-align: center;">
+                                                <button onclick="PurchaseCompanion(@HealerArray[i + 1].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@HealerArray[i + 1].Purchase @Localizer["Gold"])</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div id="thief" class="tab-pane cont">
+                        <div  class="owl-carousel">
+                            @for (int i = 0; i < ThiefArray.Length; i += 2)
+                            {
+                                <div>
+                                    <div>
+                                        <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(ThiefArray[i].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseCompanion(@ThiefArray[i].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@ThiefArray[i].Purchase @Localizer["Gold"])</button>
+                                        </div>
+                                    </div>
+
+                                    @if (i + 1 < ThiefArray.Length)
+                                    {
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(ThiefArray[i + 1].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                            <div style="width: 100%; text-align: center;">
+                                                <button onclick="PurchaseCompanion(@ThiefArray[i + 1].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@ThiefArray[i + 1].Purchase @Localizer["Gold"])</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div id="weaponMaster" class="tab-pane cont">
+                        <div  class="owl-carousel">
+                            @for (int i = 0; i < WeaponMasterArray.Length; i += 2)
+                            {
+                                <div>
+                                    <div>
+                                        <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(WeaponMasterArray[i].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                        <div style="width: 100%; text-align: center;">
+                                            <button onclick="PurchaseCompanion(@WeaponMasterArray[i].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@WeaponMasterArray[i].Purchase @Localizer["Gold"])</button>
+                                        </div>
+                                    </div>
+
+                                    @if (i + 1 < WeaponMasterArray.Length)
+                                    {
+                                        <div>
+                                            <img style="width: 100%;" alt="Card" src="~/uploads/game/cards/companions/@(WeaponMasterArray[i + 1].Id + Util.LanguageSelection(".en", ".fr") + ".svg")" )" />
+                                            <div style="width: 100%; text-align: center;">
+                                                <button onclick="PurchaseCompanion(@WeaponMasterArray[i + 1].Id)" class="btn btn-space btn-success">@Localizer["Purchase"] (@WeaponMasterArray[i + 1].Purchase @Localizer["Gold"])</button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+        $(".owl-carousel").owlCarousel({
+            items: 4,
+            navigation: true,
+            pagination: true,
+            navigationText: ["@Localizer["Prev"]","@Localizer["Next"]"]
+        });
+    });
+</script>

@@ -1,0 +1,49 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    List<Inventory> InventoryItemsIdList;
+    List<Items> InventoryItemsList = new List<Items>();
+    List<int> InventoryMainItemsIdList = new List<int>();
+    int lastTr = 0;
+    using (var context = new SiteDbContext())
+    {
+        var player = context.Characters
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).FirstOrDefault();
+
+        InventoryItemsIdList = context.Inventory
+            .OrderByDescending(r => r.Id)
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).ToList();
+
+        @foreach (var item in InventoryItemsIdList)
+        {
+            Items tempItems = context.Items.Where(r => r.Id == item.ItemId).Select(r => r).FirstOrDefault();
+            if(!(item.Id == player.WeaponInventoryId || item.Id == player.ArmorInventoryId || item.Id == player.ShieldInventoryId || item.Id == player.BootsInventoryId ||
+                item.Id == player.JewelryInventoryId || item.Id == player.BagInventoryId)) {
+                InventoryItemsList.Add(tempItems);
+                InventoryMainItemsIdList.Add((int)item.Id);
+            }
+        }
+    }
+}
+
+@for (int i = 0; i < InventoryItemsList.ToArray().Length; i++)
+{
+    <div class="btn-group col-md-3">
+        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img style="width: 100%; cursor: pointer;" alt="Card" src="~/uploads/game/cards/items/@(InventoryItemsList.ElementAt(i).Id +  Util.LanguageSelection(".en", ".fr") + ".svg")" />
+        </a>
+        <ul class="dropdown-menu">
+            <li><a onclick="EquipItem(@InventoryMainItemsIdList.ElementAt(i))" style="cursor: pointer;">@Localizer["Equip"]</a></li>
+            <li><a href="#" class="popoverJsInDrop" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="right" title="@Util.ItemTitle(InventoryItemsList.ElementAt(i))" data-content="@Util.ItemDescription(InventoryItemsList.ElementAt(i))">@Localizer["Statistics"]</a></li>
+        </ul>
+    </div>
+}
+
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+</script>

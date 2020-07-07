@@ -1,0 +1,39 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Identity;
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    List<NarrativeQuest> itemList;
+    using (var context = new SiteDbContext())
+    {
+        var NarrativeQuestStep = context.Characters
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r.NarrativeQuestStep).First();
+
+        itemList = context.NarrativeQuest
+            .Where(r => r.Id <= NarrativeQuestStep + 1)
+            .Select(r => r).ToList();
+    }
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading panel-heading-divider">
+        <div class="tools"><span onclick="CloseArea()" class="icon mdi mdi-close"></span></div>
+        <div class="title">@Localizer["Manor"]</div>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            @foreach (var item in itemList) {
+                <div class="col-md-4">
+                    <div class="panel panel-border-color panel-border-color-primary">
+                        <div class="panel-heading">@Util.LanguageSelection(item.TitleEn, item.TitleFr)</div>
+                        <div class="panel-body">
+                            <p>@Util.LanguageSelection(item.DescriptionEn, item.DescriptionFr)</p>
+                            <button onclick="StartNarrativeQuest(@item.Id)" style="float: right;" class="btn btn-space btn-primary">@Localizer["Start the quest"]</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

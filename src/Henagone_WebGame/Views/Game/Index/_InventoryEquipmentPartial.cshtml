@@ -1,0 +1,149 @@
+﻿@using Henagone_WebGame.Models.GameViewModels
+@using System.Security.Claims
+@using static Henagone_WebGame.Controllers.GameController
+@{
+    List<Inventory> InventoryItemsIdList;
+    List<Items> InventoryItemsList = new List<Items>();
+    List<int> InventoryMainItemsIdList = new List<int>();
+    Items WeaponInventory = null, ArmorInventory = null, ShieldInventory = null, BootsInventory = null, JewelryInventory = null, BagInventory = null;
+    int lastTr = 0;
+    using (var context = new SiteDbContext())
+    {
+        var player = context.Characters
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).FirstOrDefault();
+
+        InventoryItemsIdList = context.Inventory
+            .OrderByDescending(r => r.Id)
+            .Where(r => r.UserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+            .Select(r => r).ToList();
+
+        @foreach (var item in InventoryItemsIdList)
+        {
+            Items tempItems = context.Items.Where(r => r.Id == item.ItemId).Select(r => r).FirstOrDefault();
+
+            if (item.Id == player.WeaponInventoryId)
+            {
+                WeaponInventory = tempItems;
+            }
+            else if (item.Id == player.ArmorInventoryId)
+            {
+                ArmorInventory = tempItems;
+            }
+            else if (item.Id == player.ShieldInventoryId)
+            {
+                ShieldInventory = tempItems;
+            }
+            else if (item.Id == player.BootsInventoryId)
+            {
+                BootsInventory = tempItems;
+            }
+            else if (item.Id == player.JewelryInventoryId)
+            {
+                JewelryInventory = tempItems;
+            }
+            else if (item.Id == player.BagInventoryId)
+            {
+                BagInventory = tempItems;
+            }
+            else
+            {
+                InventoryItemsList.Add(tempItems);
+                InventoryMainItemsIdList.Add((int)item.Id);
+            }
+        }
+    }
+}
+
+<div class="col-xs-3">
+    @if (WeaponInventory != null)
+    {
+        <div class="btn-group">
+            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img style="width: 100%; cursor: pointer;" alt="Card" src="~/uploads/game/cards/items/@(WeaponInventory.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+            </a>
+            <ul class="dropdown-menu">
+                <li><a onclick="UnequipItem(0)" style="cursor: pointer;">@Localizer["Unequip"]</a></li>
+                <li><a href="#" class="popoverJsInDrop" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="right" title="@Util.ItemTitle(WeaponInventory)" data-content="@Util.ItemDescription(WeaponInventory)">@Localizer["Statistics"]</a></li>
+            </ul>
+        </div>
+    }
+
+    @if (ArmorInventory != null)
+    {
+
+        <div class="btn-group">
+            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img style="width: 100%; cursor: pointer;" alt="Card" src="~/uploads/game/cards/items/@(ArmorInventory.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+            </a>
+            <ul class="dropdown-menu">
+                <li><a onclick="UnequipItem(1)" style="cursor: pointer;">@Localizer["Unequip"]</a></li>
+                <li><a href="#" class="popoverJsInDrop" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="right" title="@Util.ItemTitle(ArmorInventory)" data-content="@Util.ItemDescription(ArmorInventory)">@Localizer["Statistics"]</a></li>
+            </ul>
+        </div>
+    }
+
+    @if (ShieldInventory != null)
+    {
+        <div class="btn-group">
+            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img style="width: 100%; cursor: pointer;" alt="Card" src="~/uploads/game/cards/items/@(ShieldInventory.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+            </a>
+            <ul class="dropdown-menu">
+                <li><a onclick="UnequipItem(2)" style="cursor: pointer;">@Localizer["Unequip"]</a></li>
+                <li><a href="#" class="popoverJsInDrop" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="right" title="@Util.ItemTitle(ShieldInventory)" data-content="@Util.ItemDescription(ShieldInventory)">@Localizer["Statistics"]</a></li>
+            </ul>
+        </div>
+    }
+</div>
+
+<div class="col-xs-6">
+    <img style="width: 100%;" alt="Character" src="~/images/Game/Inventory/Silhouette.svg" />
+</div>
+
+<div class="col-xs-3">
+    @if (BootsInventory != null)
+    {
+        <div class="btn-group">
+            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img style="width: 100%; cursor: pointer;" alt="Card" src="~/uploads/game/cards/items/@(BootsInventory.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+            </a>
+            <ul class="dropdown-menu">
+                <li><a onclick="UnequipItem(3)" style="cursor: pointer;">@Localizer["Unequip"]</a></li>
+                <li><a href="#" class="popoverJsInDrop" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="right" title="@Util.ItemTitle(BootsInventory)" data-content="@Util.ItemDescription(BootsInventory)">@Localizer["Statistics"]</a></li>
+            </ul>
+        </div>
+    }
+
+    @if (JewelryInventory != null)
+    {
+        <div class="btn-group">
+            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img style="width: 100%; cursor: pointer;" alt="Card" src="~/uploads/game/cards/items/@(JewelryInventory.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+            </a>
+            <ul class="dropdown-menu">
+                <li><a onclick="UnequipItem(4)" style="cursor: pointer;">@Localizer["Unequip"]</a></li>
+                <li><a href="#" class="popoverJsInDrop" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="right" title="@Util.ItemTitle(JewelryInventory)" data-content="@Util.ItemDescription(JewelryInventory)">@Localizer["Statistics"]</a></li>
+            </ul>
+        </div>
+    }
+
+    @if (BagInventory != null)
+    {
+        <div class="btn-group">
+            <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <img style="width: 100%; cursor: pointer;" alt="Card" src="~/uploads/game/cards/items/@(BagInventory.Id + Util.LanguageSelection(".en", ".fr") + ".svg")" />
+            </a>
+            <ul class="dropdown-menu">
+                <li><a onclick="UnequipItem(5)" style="cursor: pointer;">@Localizer["Unequip"]</a></li>
+                <li><a href="#" class="popoverJsInDrop" style="cursor: pointer;" tabindex="0" role="button" data-html="true" data-toggle="popover" data-trigger="focus" data-placement="right" title="@Util.ItemTitle(BagInventory)" data-content="@Util.ItemDescription(BagInventory)">@Localizer["Statistics"]</a></li>
+            </ul>
+        </div>
+    }
+</div>
+
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+</script>

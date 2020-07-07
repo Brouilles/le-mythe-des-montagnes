@@ -1,0 +1,149 @@
+﻿@model Henagone_WebGame.Models.GameViewModels.CreateCharacterViewModel
+@{
+    ViewData["Title"] = Localizer["Character Creation"];
+}
+
+<div class="page-head" style="text-align: center; padding-top: 0;">
+    <h2 class="page-head-title">@Localizer["Welcome player !"]</h2>
+</div>
+
+<div id="createPlayerDiv" class="row row-centered wizard-row">
+    <div class="col-lg-8 col-sm-12 col-md-12 col-centered fuelux">
+        <div class="block-wizard panel panel-default">
+            <div class="wizard wizard-ux no-steps-container" id="wizard1">
+                <ul class="steps" style="margin-left: 0">
+                    <li class="active" data-step="1">@Localizer["Step 1"]<span class="chevron"></span></li>
+                    <li data-step="2">@Localizer["Step 2"]<span class="chevron"></span></li>
+                </ul>
+                <div class="actions">
+                    <button disabled="disabled" class="btn btn-xs btn-prev btn-default" type="button"><i class="icon mdi mdi-chevron-left"></i>@Localizer["Prev"]</button>
+                    <button class="btn btn-xs btn-next btn-default" type="button" data-last="@Localizer["Finish"]">@Localizer["Next"]<i class="icon mdi mdi-chevron-right"></i></button>
+                </div>
+                <div class="step-content">
+                    <div class="step-pane active" data-step="1">
+                        <div class="form-group no-padding">
+                            <div class="col-md-12">
+                                <h3 class="wizard-title">@Localizer["Choose your character :"]</h3>
+                            </div>
+                        </div>
+
+                        <section id="avatarsList" class="col-md-12 text-center">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4"><div id="1" class="avatarSelect img-thumbnail"><img alt="Avatar" src="~/images/avatars/1.svg"></div></div>
+                                <div class="col-lg-4 col-md-4"><div id="2" class="avatarSelect img-rounded"><img alt="Avatar" src="~/images/avatars/2.svg"></div></div>
+                                <div class="col-lg-4 col-md-4"><div id="3" class="avatarSelect img-rounded"><img alt="Avatar" src="~/images/avatars/3.svg"></div></div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4"><div id="4" class="avatarSelect img-rounded"><img alt="Avatar" src="~/images/avatars/4.svg"></div></div>
+                                <div class="col-lg-4 col-md-4"><div id="5" class="avatarSelect img-rounded"><img alt="Avatar" src="~/images/avatars/5.svg"></div></div>
+                                <div class="col-lg-4 col-md-4"><div id="6" class="avatarSelect img-rounded"><img alt="Avatar" src="~/images/avatars/6.svg"></div></div>
+                            </div>
+                        </section>
+
+                        <div class="form-group col-md-12">
+                            <div class="text-right">
+                                <button class="btn btn-primary btn-space wizard-next" data-wizard="#wizard1" onclick="updateAvatar()">@Localizer["Next Step"]</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-pane" data-step="2">
+                        <form asp-controller="Game" asp-action="CreateCharacter" class="form-horizontal group-border-dashed" method="post"> 
+                             <input type="hidden" asp-for="AvatarId" />
+                             <div class="row">
+                                <div class="col-xs-12 col-md-4">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">@UserManager.GetUserName(User) - @Localizer["Level"] 1</div>
+                                        <div id="playerDiv" class="panel-body">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tbody>
+                                                        <tr id="goldandartifacts">
+                                                            <td class="user-avatar"><img alt="Gold" src="~/images/Game/gold.svg">0 @Localizer["Gold"]</td>
+                                                            <td class="user-avatar"><img alt="Artifact" src="~/images/Game/artifact.svg" style="transform: scale(1.5);">@ViewBag.Artifacts @Localizer["Artifacts"]</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <div style="text-align: center;">
+                                                <img id="userAvatarImg" alt="Avatar" src="" style="width: 45%;">
+                                            </div>
+                                            <div style="margin: auto; width: 80%; margin-top: 13px;">
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-danger" style="width: 100%">@Localizer["Life"] 100%</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>@Localizer["Strength"]</td>
+                                                            <td class="number"><a class="icon" href="#">1</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Localizer["Defense"]</td>
+                                                            <td class="number"><a class="icon" href="#">1</a></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>@Localizer["Energy"]</td>
+                                                            <td class="number"><a class="icon" href="#">1</a></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-8">
+                                    <div class="col-md-12" style="text-align: center; padding-bottom: 20px;"><img src="~/images/logo-xx.png" style="max-width: 100%;" alt="Le mythe des montagnes" /></div>
+                                    <p>@Localizer["There are decades of it, a global and massive uprising of the human race, where each human was a slave, burst. A part of the population flees a kingdom managed by a race autocrats, the giants. Hostile to any other reign of species different from theirs. Groups of men turned to the east mountainous borders. Its mountains were a natural defense, the chaotic and narrow reliefs are perfect against the disproportionate sizes of the giants. The men sheltered there easier, beginning to base(establish) the bases of people, a primitive hope."]</p>
+                                    <p>@Localizer["You were able to run away from numerous years later with your clan. On the way of your exodus a multitude of your friends, your brothers and your sisters die as well as from unknowns. At we are arrived in mountains the number of survivor had been to divide by three, the bodies of the individuals fell constantly under the fatigue. You were saved thanks to the discovery of the city of Horaum. You understand that this city was not the only one to have been set up since the first exiles settled down in the region. Its cities it was united under the same banner to take advantage of arable land of rivers protected by the mountain range, and in time establish a kingdom where man is finally free."]</p>
+                                    <p>@Localizer["You settle down with the other migrants of your group in bottoms-districts, in shanties which were in dereliction. You renovating his ruins to you create a housing environment and be able to prosper. On the main place of Horaum, you find the means to make you some money and so to begin your new life."]</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <div class="text-right">
+                                    <button class="btn btn-default btn-space wizard-previous" data-wizard="#wizard1">@Localizer["Previous"]</button>
+                                    <button type="submit" class="btn btn-success btn-space">@Localizer["Complete"]</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Stylesheet {
+    <link rel="stylesheet" type="text/css" href="~/lib/select2/css/select2.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/lib/bootstrap-slider/css/bootstrap-slider.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/fuelux/js/wizard.js" type="text/javascript"></script>
+    <script src="~/lib/select2/js/select2.min.js" type="text/javascript"></script>
+    <script src="~/lib/bootstrap-slider/js/bootstrap-slider.js" type="text/javascript"></script>
+    <script src="~/js/app-form-wizard.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+      	    App.wizard();
+        });
+
+        function updateAvatar() {
+            $('#userAvatarImg').attr('src', '/images/avatars/' + $('.avatarSelect.img-thumbnail').attr('id') + '.svg');
+        }
+
+        $('.avatarSelect').click(function () {
+            $('.avatarSelect').removeClass('img-thumbnail');
+
+            $(this).removeClass('img-circle');
+            $(this).addClass('img-thumbnail');
+            $('#AvatarId').val($('.avatarSelect.img-thumbnail').attr('id'));
+        });
+    </script>
+}

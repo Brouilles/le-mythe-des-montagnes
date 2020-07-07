@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>@ViewData["Title"] - Le mythe des montagnes</title>
+    <link rel="icon" href="~/favicon.ico" />
+    <link href="~/images/logo-fav.png" rel="shortcut icon" type="image/png" />
+
+    @RenderSection("StyleSheet", required: false)
+
+    <link rel="stylesheet" type="text/css" href="~/lib/perfect-scrollbar/css/perfect-scrollbar.min.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/lib/material-design-icons/css/material-design-iconic-font.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/outdated-browser/outdatedbrowser/outdatedbrowser.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true" />
+
+    <environment names="Development">
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </environment>
+</head>
+<body>
+    <script type="application/ld+json">
+    {
+        "@@context" : "http://schema.org",
+        "@@type" : "VideoGame",
+        "genre":["RPG", "online game", "browser game"],
+        "playMode": "MultiPlayer",
+        "gamePlatform": "Browser",
+        "name" : "Name",
+        "url" : "#"
+    }
+    </script>
+
+    <div id="outdated"></div>
+    <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" style="display: none;"></form>
+    <div class="be-wrapper be-fixed-sidebar @if (ViewData["NoSideBarLeft"] != null) { <text>be-nosidebar-left</text> }">
+        <nav class="navbar navbar-default navbar-fixed-top be-top-header">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    @if (ViewData["NoSideBarLeft"] == null) { <a href="#" class="be-toggle-left-sidebar"><span class="icon mdi mdi-menu"></span></a> }
+                    <a href="~/" class="navbar-brand"></a>
+                </div>
+                <div class="be-right-navbar">
+                    <div class="page-title"><span>@ViewData["Title"]</span></div>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        @await Html.PartialAsync("_AvatarPartial")
+                        <ul class="nav navbar-nav navbar-right be-icons-nav">
+                            <li class="dropdown">
+                                <a asp-area="" asp-controller="Manage" asp-action="Index" aria-expanded="false"><span class="icon mdi mdi-settings"></span></a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="nav navbar-nav navbar-right be-icons-nav navbar-mobile-center" style="line-height: 60px;">
+                            <a class="btn btn-space btn-default"  asp-area="" asp-controller="Account" asp-action="Login">@Localizer["Sign In"]</a>
+                            <a class="btn btn-space btn-success"  asp-area="" asp-controller="Account" asp-action="Register">@Localizer["Sign Up"]</a>
+                        </div>
+                    }
+                </div>
+                @if (ViewData["NoSideBarLeft"] != null || ViewData["TopHeaderMenu"] != null)
+                {
+                    @RenderSection("TopHeaderMenu", required: false)
+                }
+            </div>
+        </nav>
+        @if (ViewData["NoSideBarLeft"] == null)
+        {
+        <div class="be-left-sidebar">
+            <div class="left-sidebar-wrapper">
+                <a href="#" class="left-sidebar-toggle">@ViewData["Title"]</a>
+                <div class="left-sidebar-spacer">
+                    <div class="left-sidebar-scroll">
+                        <div class="left-sidebar-content">
+                            <ul class="sidebar-elements">
+                                <li class="divider">Menu</li>
+                                <li><a asp-area="" asp-controller="Home" asp-action="Index"><i class="icon mdi mdi-home"></i><span>@Localizer["Home"]</span></a></li>
+                                <li><a asp-area="" asp-controller="Game" asp-action="Index"><i class="icon mdi mdi-gamepad"></i><span>@Localizer["Game"]</span></a></li>
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    <li><a href="https://discord.gg/5JNmvMf" target="_blank"><i class="icon mdi mdi-comments"></i><span>@Localizer["Discussion room"]</span></a></li>
+                                    <li><a asp-area="" asp-controller="Shop" asp-action="Index"><i class="icon mdi mdi-shopping-basket"></i><span>@Localizer["Shop"]</span></a></li>
+                                    if (User.IsInRole("Administrator"))
+                                    {
+                                        <li class="divider">Administration</li>
+                                        <li class="parent">
+                                            <a href="#"><span>Jeu</span></a>
+                                            <ul class="sub-menu">
+                                                <li><a asp-controller="Admin" asp-action="Job">Métiers</a></li>
+                                                <li><a asp-controller="Admin" asp-action="Items">Objets</a></li>
+                                                <li><a asp-controller="Admin" asp-action="Potions">Potions</a></li>
+                                                <li><a asp-controller="Admin" asp-action="HeroQuests">Quêtes de héros</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="parent">
+                                            <a href="#"><span>Compagnons</span></a>
+                                            <ul class="sub-menu">
+                                                <li><a asp-controller="Admin" asp-action="Companions">Compagnons</a></li>
+                                                <li><a asp-controller="Admin" asp-action="CompanionQuests">Quêtes</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="parent">
+                                            <a href="#"><span>Monstres</span></a>
+                                            <ul class="sub-menu">
+                                                <li><a asp-controller="Admin" asp-action="MonstersType">Races (Type)</a></li>
+                                                <li><a asp-controller="Admin" asp-action="Monsters">Monstres</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="parent">
+                                            <a href="#"><span>Quête narrative</span></a>
+                                            <ul class="sub-menu">
+                                                <li><a asp-controller="Admin" asp-action="NarrativeQuest">Quêtes</a></li>
+                                                <li><a asp-controller="Admin" asp-action="NarrativeQuestStep">Etapes</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="parent">
+                                            <a href="#"><i class="icon mdi mdi-bug"></i><span>Debug</span></a>
+                                            <ul class="sub-menu">
+                                                <li><a asp-controller="Admin" asp-action="DebugBattle">Combat</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="parent">
+                                            <a href="#"><i class="icon mdi mdi-shopping-basket"></i><span>@Localizer["Shop"]</span></a>
+                                            <ul class="sub-menu">
+                                                <li><a asp-controller="Admin" asp-action="ShopPrices">Prix</a></li>
+                                                <li><a asp-controller="Admin" asp-action="Gift">Codes cadeaux</a></li>
+                                                <li><a asp-controller="Admin" asp-action="ShopStatistics">Historique</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="parent">
+                                            <a href="#"><i class="icon mdi mdi-trending-up"></i><span>Statistiques</span></a>
+                                            <ul class="sub-menu">
+                                                <li><a asp-controller="Admin" asp-action="Characters">Personnages</a></li>
+                                                <li><a asp-controller="Admin" asp-action="Members">Comptes</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a asp-controller="Admin" asp-action="Maintenance"><i class="icon mdi mdi-settings"></i>Maintenance du site</a></li>
+                                    }
+                                    <li class="divider">@Localizer["My account"]</li>
+                                    <li><a asp-area="" asp-controller="Manage" asp-action="Index"><i class="icon mdi mdi-settings"></i><span>@Localizer["Settings"]</span></a></li>
+                                    <li><a href="javascript:document.getElementById('logoutForm').submit()"><i class="icon mdi mdi-power"></i><span>@Localizer["Sign Out"]</span></a></li>
+                                }
+                                else
+                                {
+                                    <li><a asp-area="" asp-controller="Account" asp-action="Login"><i class="icon mdi mdi-account"></i><span>@Localizer["Sign In"]</span></a></li>
+                                    <li><a asp-area="" asp-controller="Account" asp-action="Register"><i class="icon mdi mdi-account-add"></i><span>@Localizer["Sign Up"]</span></a></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <a asp-controller="CGU" asp-action="Index" target="_blank">@Localizer["Terms and conditions"]</a>
+                </div>
+                <div class="lang-widget">
+                    @await Html.PartialAsync("_SelectLanguagePartial")
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+        </div>
+        }
+        <div class="be-content">
+            <div id="PageContent" class="main-content container-fluid">
+                @RenderBody()
+
+                @if (ViewData["NoSideBarLeft"] != null)
+                {
+                    <footer>
+                        <div class="container">
+                            <div class="col-md-12" style="margin-top: 20px;">
+                                <div class="col-md-8" style="line-height: 48px;">
+                                    © 2016-@DateTime.Now.Year - Le mythe des montagnes - <a asp-controller="CGU" asp-action="Index">@Localizer["Terms and conditions"]</a>
+                                </div>
+
+                                <div class="col-md-4">
+                                    @await Html.PartialAsync("_SelectLanguagePartial")
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                }
+            </div>
+        </div>
+    </div>
+
+    <environment names="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/outdated-browser/outdatedbrowser/outdatedbrowser.min.js"></script>
+        <script src="~/lib/perfect-scrollbar/js/perfect-scrollbar.jquery.min.js" type="text/javascript"></script>
+        <script src="~/js/main.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+        <script src="~/lib/outdated-browser/outdatedbrowser/outdatedbrowser.min.js" asp-append-version="true"></script>
+        <script src="~/lib/perfect-scrollbar/js/perfect-scrollbar.jquery.min.js" type="text/javascript" asp-append-version="true"></script>
+        <script src="~/js/main.min.js" asp-append-version="true"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js" asp-append-version="true"></script>
+    </environment>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            outdatedBrowser({
+                bgColor: '#f25648',
+                color: '#ffffff',
+                lowerThan: 'transform',
+                languagePath: '/lib/outdated-browser/outdatedbrowser/lang/@Util.LanguageSelection("en.html", "fr.html")'
+            });
+            App.init();
+        });
+
+        @if (ViewData["NoSideBarLeft"] == null) {
+            <text>
+            // Responsive
+            responsiveLeftSidebar();
+            window.onresize = function (event) {
+                responsiveLeftSidebar();
+            }
+
+            function responsiveLeftSidebar() {
+                if ($(window).width() <= 980) {
+                    $('.be-wrapper').addClass('be-offcanvas-menu');
+                    $('.be-toggle-left-sidebar').show();
+                }
+                else {
+                    $('.be-wrapper').removeClass('be-offcanvas-menu');
+                    $('.be-toggle-left-sidebar').hide();
+                }
+            }
+            </text>
+        }
+    </script>
+
+    @RenderSection("scripts", required: false)
+    @RenderSection("modals", required: false)
+</body>
+</html>
